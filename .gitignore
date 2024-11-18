@@ -1,7 +1,7 @@
 application-dev.yml
 application-local.yml
 application-prod.yml
-
+application.yml
 
 HELP.md
 .gradle
