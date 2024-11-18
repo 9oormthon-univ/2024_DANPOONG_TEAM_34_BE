@@ -1,8 +1,6 @@
 name: Java CI with Gradle
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
@@ -28,8 +26,11 @@ jobs:
         run: |
           cd ./src/main/resources
           touch application-prod.yml
-          echo "${{ secrets.PROPERTIES_PROD }}" > application-prod.yml
+          echo "$PROPERTIES_PROD" > application-prod.yml
         shell: bash
+        env:
+          PROPERTIES_PROD: ${{ secrets.PROPERTIES_PROD }}
+
 
       # Gradle 설정
       - name: Setup Gradle
