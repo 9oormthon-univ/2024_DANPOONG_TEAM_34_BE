@@ -11,14 +11,14 @@ public enum EMealTime {
     DINNER("DINNER")
     ;
 
-    private final String meat;
+    private final String meal;
 
-    public static EMealTime fromName(String meat) {
-        return EMealTime.valueOf(meat.toUpperCase());
+    public static EMealTime fromName(String meal) {
+        return EMealTime.valueOf(meal.toUpperCase());
     }
 
     @Override
     public String toString() {
-        return meat;
+        return meal;
     }
 }
