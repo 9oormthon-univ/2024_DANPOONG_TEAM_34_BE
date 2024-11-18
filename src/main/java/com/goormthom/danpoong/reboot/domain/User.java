@@ -2,16 +2,10 @@ package com.goormthom.danpoong.reboot.domain;
 
 import com.goormthom.danpoong.reboot.domain.type.EProvider;
 import com.goormthom.danpoong.reboot.domain.type.ERole;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -27,9 +21,6 @@ import org.hibernate.annotations.DynamicUpdate;
 })
 @DynamicUpdate
 public class User {
-    /* -------------------------------------------- */
-    /* -------------- Default Column -------------- */
-    /* -------------------------------------------- */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -46,31 +37,44 @@ public class User {
     @Column(name = "role", nullable = false)
     private ERole role;
 
-    /* -------------------------------------------- */
-    /* ------------ Information Column ------------ */
-    /* -------------------------------------------- *///
+    @Column(name = "refresh_Token")
+    private String refreshToken;
+
+    @Column(name = "email", nullable = false)
+    private String email;
+
     @Column(name =  "nickname", nullable = false)
     private String nickname;
 
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "environmental_temperature", nullable = false)
-    private Float environmentalTemperature;
+    @Column(name = "gender", nullable = false)
+    private String gender;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDate createdAt;
+    @Column(name = "birth_date", nullable = false)
+    private LocalDate birthDate;
 
-    /* -------------------------------------------- */
-    /* -------------- Security Column ------------- */
-    /* -------------------------------------------- */
-    @Column(name = "refresh_Token")
-    private String refreshToken;
+    @Lob
+    @Column(name = "motivation", nullable = false)
+    private String motivation;
+
+    @Column(name = "join_date", nullable = false)
+    private LocalDate joinDate;
+
+    @Column(name = "work_start_time", nullable = false)
+    private LocalTime workStartTime;
+
+    @Column(name = "work_end_time", nullable = false)
+    private LocalTime workEndTime;
+
+    @Column(name = "attendance_time", nullable = false)
+    private LocalTime attendanceTime;
+
+    @Column(name = "is_outside", nullable = false)
+    private Boolean isOutside;
 
 
-    /* -------------------------------------------- */
-    /* ----------------- Functions ---------------- */
-    /* -------------------------------------------- */
     @Builder
     public User(
             String serialId,
@@ -84,8 +88,6 @@ public class User {
         this.role = role;
         this.nickname = nickname;
         this.password = password;
-        this.environmentalTemperature = 36.5f;
-        this.createdAt = LocalDate.now();
         this.refreshToken = null;
     }
 }
