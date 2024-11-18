@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 @Slf4j
 public class JwtExceptionFilter extends OncePerRequestFilter {
@@ -60,6 +61,10 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return Constants.NO_NEED_AUTH_URLS.contains(request.getRequestURI());
+        String requestURI = request.getRequestURI();
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+
+        return Constants.NO_NEED_AUTH_URLS.stream()
+                .anyMatch(pattern -> antPathMatcher.match(pattern, requestURI));
     }
 }

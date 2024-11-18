@@ -21,6 +21,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Slf4j
@@ -59,7 +60,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return Constants.NO_NEED_AUTH_URLS.contains(request.getRequestURI());
+        String requestURI = request.getRequestURI();
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+
+        return Constants.NO_NEED_AUTH_URLS.stream()
+                .anyMatch(pattern -> antPathMatcher.match(pattern, requestURI));
     }
 }
 

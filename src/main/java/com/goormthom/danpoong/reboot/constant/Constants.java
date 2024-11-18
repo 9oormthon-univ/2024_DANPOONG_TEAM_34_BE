@@ -16,7 +16,13 @@ public class Constants {
 
             "/api-docs.html",
             "/api-docs/**",
-            "/swagger-ui/**"
+
+            "/favicon.ico",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-resources/**",
+
+            "/api/health"
     );
 
     public static List<String> USER_URLS = List.of(
