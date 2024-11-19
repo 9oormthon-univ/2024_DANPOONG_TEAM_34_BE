@@ -1,9 +1,11 @@
 package com.goormthom.danpoong.reboot.service.oauth;
 
+import com.goormthom.danpoong.reboot.constant.Constants;
 import com.goormthom.danpoong.reboot.domain.User;
 import com.goormthom.danpoong.reboot.domain.type.EProvider;
 import com.goormthom.danpoong.reboot.domain.type.ERole;
 import com.goormthom.danpoong.reboot.dto.response.JwtTokenDto;
+import com.goormthom.danpoong.reboot.dto.response.LoginResponseDto;
 import com.goormthom.danpoong.reboot.repository.UserRepository;
 import com.goormthom.danpoong.reboot.usecase.oauth.LoginByKakaoUseCase;
 import com.goormthom.danpoong.reboot.util.JwtUtil;
@@ -25,9 +27,11 @@ public class LoginByKakaoService implements LoginByKakaoUseCase {
     private final OAuth2Util oAuth2Util;
     private final JwtUtil jwtUtil;
 
+    private String userFlag;
+
     @Override
     @Transactional
-    public JwtTokenDto execute(String accessToken) {
+    public LoginResponseDto execute(String accessToken) {
         Map<String, String> userInfo = oAuth2Util.getKakaoUserInformation(accessToken);
 
         String serialId = userInfo.get("id");
@@ -42,7 +46,7 @@ public class LoginByKakaoService implements LoginByKakaoUseCase {
                                     .email(userInfo.get("email"))
                                     .password(bCryptPasswordEncoder.encode(PasswordUtil.generateRandomPassword())).build()
                     );
-
+                    userFlag = Constants.ON_BOARDING;
                     return UserRepository.UserSecurityForm.of(user);
                 });
 
@@ -53,6 +57,16 @@ public class LoginByKakaoService implements LoginByKakaoUseCase {
 
         userRepository.updateRefreshToken(userSecurityForm.getId(), jwtTokenDto.refreshToken());
 
-        return jwtTokenDto;
+        return LoginResponseDto.of(jwtTokenDto, determineUserFlag(serialId));
+    }
+
+    private String determineUserFlag(String serialId) {
+        if (userRepository.existsBySerialIdAndAttendanceTimeIsNotNull(serialId)) {
+            return Constants.HOME;
+        } else if (userRepository.existsBySerialIdAndGenderIsNotNull(serialId)) {
+            return Constants.REGISTER;
+        } else {
+            return Constants.ON_BOARDING;
+        }
     }
 }

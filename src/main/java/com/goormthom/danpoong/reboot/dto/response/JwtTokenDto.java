@@ -15,4 +15,5 @@ public record JwtTokenDto(
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
+
 }
