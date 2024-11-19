@@ -41,7 +41,6 @@ public interface AuthDocs {
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class), mediaType = "application/json")
             )
     })
-    @PostMapping("/reissue")
     ResponseDto<?> reissueToken(
             HttpServletRequest request
     );
@@ -75,7 +74,6 @@ public interface AuthDocs {
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class), mediaType = "application/json")
             )
     })
-    @PostMapping("/withdrawal")
     ResponseDto<?> withdrawal(
             @Parameter(hidden = true)
             @UserId UUID userId
