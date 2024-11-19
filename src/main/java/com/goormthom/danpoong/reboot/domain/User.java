@@ -2,6 +2,8 @@ package com.goormthom.danpoong.reboot.domain;
 
 import com.goormthom.danpoong.reboot.domain.type.EProvider;
 import com.goormthom.danpoong.reboot.domain.type.ERole;
+import com.goormthom.danpoong.reboot.dto.request.CreateOnBoardingRequestDto;
+import com.goormthom.danpoong.reboot.dto.request.CreateRegisterRequestDto;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -49,31 +51,32 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     private String gender;
 
-    @Column(name = "birth_date", nullable = false)
+    @Column(name = "birth_date")
     private LocalDate birthDate;
 
     @Lob
-    @Column(name = "motivation", nullable = false)
+    @Column(name = "motivation")
     private String motivation;
 
-    @Column(name = "join_date", nullable = false)
-    private LocalDate joinDate;
+    @Column(name = "join_date")
+    private LocalDate joinDate; // 가입 일자
 
-    @Column(name = "work_start_time", nullable = false)
-    private LocalTime workStartTime;
+    @Column(name = "work_start_time")
+    private LocalDate workStartTime; // 근무시작 일자
 
-    @Column(name = "work_end_time", nullable = false)
-    private LocalTime workEndTime;
+    @Column(name = "work_end_time")
+    private LocalDate workEndTime; // 근무 종료 일자
 
-    @Column(name = "attendance_time", nullable = false)
-    private LocalTime attendanceTime;
+    @Column(name = "attendance_time")
+    private LocalTime attendanceTime; // 출근 시간
 
-    @Column(name = "is_outside", nullable = false)
-    private Boolean isOutside;
+    @Column(name = "is_outside")
+    private Boolean isOutside; // 외근 여부
 
+    //------------------------------------
 
     @Builder
     public User(
@@ -81,7 +84,8 @@ public class User {
             EProvider provider,
             ERole role,
             String nickname,
-            String password
+            String password,
+            String email
     ) {
         this.serialId = serialId;
         this.provider = provider;
@@ -89,5 +93,23 @@ public class User {
         this.nickname = nickname;
         this.password = password;
         this.refreshToken = null;
+        this.email = email;
+    }
+
+    //------------------------------------
+
+    public void updateOnboard(CreateOnBoardingRequestDto createOnBoardingRequestDto) {
+        this.nickname = createOnBoardingRequestDto.nickname();
+        this.gender = createOnBoardingRequestDto.gender();
+        this.birthDate = createOnBoardingRequestDto.birthday();
+        this.motivation = createOnBoardingRequestDto.motivation();
+    }
+
+    public void updateRegister(CreateRegisterRequestDto createRegisterRequestDto) {
+        this.joinDate = LocalDate.now();
+        this.workStartTime = createRegisterRequestDto.workStartTime();
+        this.workEndTime = createRegisterRequestDto.workStartTime().plusDays(createRegisterRequestDto.partTime());
+        this.attendanceTime = createRegisterRequestDto.attendanceTime();
+        this.isOutside = createRegisterRequestDto.isOutside();
     }
 }
