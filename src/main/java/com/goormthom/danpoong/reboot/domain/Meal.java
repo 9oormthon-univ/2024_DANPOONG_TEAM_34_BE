@@ -3,6 +3,7 @@ package com.goormthom.danpoong.reboot.domain;
 import com.goormthom.danpoong.reboot.domain.type.EMealTime;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,4 +24,17 @@ public class Meal {
     @Column(name = "meal_time")
     @Enumerated(EnumType.STRING)
     private EMealTime mealTime;
+
+    @Builder
+    public Meal(User user, EMealTime mealTime) {
+        this.user = user;
+        this.mealTime = mealTime;
+    }
+
+    public static Meal toEntity(User user, EMealTime mealTime) {
+        return Meal.builder()
+                .mealTime(mealTime)
+                .user(user)
+                .build();
+    }
 }

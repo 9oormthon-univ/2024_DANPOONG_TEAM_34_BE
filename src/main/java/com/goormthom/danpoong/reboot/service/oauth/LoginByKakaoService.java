@@ -31,7 +31,6 @@ public class LoginByKakaoService implements LoginByKakaoUseCase {
         Map<String, String> userInfo = oAuth2Util.getKakaoUserInformation(accessToken);
 
         String serialId = userInfo.get("id");
-
         UserRepository.UserSecurityForm userSecurityForm = userRepository.findFormBySerialIdAndProvider(serialId, EProvider.KAKAO)
                 .orElseGet(() -> {
                     User user = userRepository.save(
@@ -40,6 +39,7 @@ public class LoginByKakaoService implements LoginByKakaoUseCase {
                                     .provider(EProvider.KAKAO)
                                     .role(ERole.USER)
                                     .nickname(userInfo.get("nickname"))
+                                    .email(userInfo.get("email"))
                                     .password(bCryptPasswordEncoder.encode(PasswordUtil.generateRandomPassword())).build()
                     );
 
