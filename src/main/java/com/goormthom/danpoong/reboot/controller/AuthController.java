@@ -2,6 +2,7 @@ package com.goormthom.danpoong.reboot.controller;
 
 import com.goormthom.danpoong.reboot.annotation.UserId;
 import com.goormthom.danpoong.reboot.constant.Constants;
+import com.goormthom.danpoong.reboot.controller.docs.AuthDocs;
 import com.goormthom.danpoong.reboot.dto.common.ResponseDto;
 import com.goormthom.danpoong.reboot.exception.CommonException;
 import com.goormthom.danpoong.reboot.exception.ErrorCode;
@@ -18,9 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
-public class AuthController {
+public class AuthController implements AuthDocs {
     private final ReissueTokenUseCase reissueTokenUseCase;
     private final WithdrawalUseCase withdrawalUseCase;
+
 
     @PostMapping("/reissue")
     public ResponseDto<?> reissueToken(
