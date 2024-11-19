@@ -1,6 +1,7 @@
 package com.goormthom.danpoong.reboot.controller;
 
 import com.goormthom.danpoong.reboot.annotation.UserId;
+import com.goormthom.danpoong.reboot.controller.docs.UserDocs;
 import com.goormthom.danpoong.reboot.dto.common.ResponseDto;
 import com.goormthom.danpoong.reboot.dto.request.CreateOnBoardingRequestDto;
 import com.goormthom.danpoong.reboot.dto.request.CreateRegisterRequestDto;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
-public class UserController {
+public class UserController implements UserDocs {
     private final ReadUserUseCase readUserUseCase;
     private final CreateOnBoardingUseCase createOnBoardingUseCase;
     private final CreateRegisterUseCase createRegisterUseCase;
