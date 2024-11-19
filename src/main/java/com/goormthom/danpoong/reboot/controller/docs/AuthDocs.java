@@ -5,6 +5,7 @@ import com.goormthom.danpoong.reboot.dto.common.ExceptionDto;
 import com.goormthom.danpoong.reboot.dto.common.ResponseDto;
 import com.goormthom.danpoong.reboot.dto.response.JwtTokenDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -48,10 +49,12 @@ public interface AuthDocs {
     @Operation(
             summary = "회원 삭제",
             description = """
-        회원 정보를 삭제합니다. 
-        요청 시 사용자 식별을 위해 액세스 토큰을 `Authorization` 헤더에 포함해야 합니다.
-        요청이 성공적으로 처리되면 계정이 영구적으로 삭제됩니다.
-        """)
+    회원 정보를 삭제합니다. 
+    요청 시 사용자 식별을 위해 액세스 토큰을 `Authorization` 헤더에 포함해야 합니다.
+    요청 본문은 필요하지 않습니다.
+    성공적으로 처리되면 회원 계정이 영구적으로 삭제됩니다.
+    """
+    )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -61,9 +64,9 @@ public interface AuthDocs {
             @ApiResponse(
                     responseCode = "401",
                     description = """
-                - `Expired Token`: 제공된 액세스 토큰이 만료된 경우
-                - `Invalid Token`: 제공된 액세스 토큰이 유효하지 않거나 올바른 형식이 아닌 경우
-                """,
+            - `Expired Token`: 제공된 액세스 토큰이 만료된 경우
+            - `Invalid Token`: 제공된 액세스 토큰이 유효하지 않거나 올바른 형식이 아닌 경우
+            """,
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class), mediaType = "application/json")
             ),
             @ApiResponse(
@@ -74,6 +77,7 @@ public interface AuthDocs {
     })
     @PostMapping("/withdrawal")
     ResponseDto<?> withdrawal(
+            @Parameter(hidden = true)
             @UserId UUID userId
     );
 }
