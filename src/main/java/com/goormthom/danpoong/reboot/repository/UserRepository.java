@@ -14,6 +14,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
 
+    Boolean existsBySerialIdAndAttendanceTimeIsNotNull(String serialId);
+
+    Boolean existsBySerialIdAndGenderIsNotNull(String serialId);
+
     @Query("select u.id as id, u.role as role, u.password as password from User u where u.id = :id and u.refreshToken is not null")
     Optional<UserSecurityForm> findFormById(@Param("id") UUID id);
 
