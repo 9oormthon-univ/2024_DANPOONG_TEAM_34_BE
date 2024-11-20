@@ -3,7 +3,6 @@ package com.goormthom.danpoong.reboot.controller.docs;
 import com.goormthom.danpoong.reboot.annotation.UserId;
 import com.goormthom.danpoong.reboot.dto.common.ExceptionDto;
 import com.goormthom.danpoong.reboot.dto.common.ResponseDto;
-import com.goormthom.danpoong.reboot.dto.response.JwtTokenDto;
 import com.goormthom.danpoong.reboot.dto.response.RemainPeriodResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
