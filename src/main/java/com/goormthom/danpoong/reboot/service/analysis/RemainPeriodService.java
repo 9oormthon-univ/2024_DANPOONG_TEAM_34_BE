@@ -24,26 +24,23 @@ public class RemainPeriodService implements RemainPeriodUseCase {
     public RemainPeriodResponseDto execute(UUID userId) {
         User user = findUserById(userId);
 
-        LocalDate workStartTime = user.getWorkStartTime(); // 시작 일자
-        LocalDate workEndTime = user.getWorkEndTime();     // 종료 일자
-        LocalDate today = LocalDate.now();                // 현재 일자
+        LocalDate workStartTime = user.getWorkStartTime();
+        LocalDate workEndTime = user.getWorkEndTime();
+        LocalDate today = LocalDate.now();
 
-        // 계약 기간 계산
-        long contractPeriod = Duration.between(workStartTime.atStartOfDay(), workEndTime.atStartOfDay()).toDays();
-
-        // 남은 기간 계산
-        long remainPeriod = Duration.between(today.atStartOfDay(), workEndTime.atStartOfDay()).toDays();
-        remainPeriod = Math.max(remainPeriod, 0); // 남은 기간이 음수가 되지 않도록
-
-        // 진행된 기간 계산
-        long progressPeriod = Duration.between(workStartTime.atStartOfDay(), today.atStartOfDay()).toDays();
-        progressPeriod = Math.min(progressPeriod, contractPeriod); // 계약 기간보다 크지 않도록
+        long contractPeriod = calculateDaysBetween(workStartTime, workEndTime);
+        long remainPeriod = Math.max(calculateDaysBetween(today, workEndTime), 0);
+        long progressPeriod = Math.min(calculateDaysBetween(workStartTime, today), contractPeriod);
 
         return RemainPeriodResponseDto.builder()
                 .contractPeriod(contractPeriod)
                 .remainPeriod(remainPeriod)
                 .progressPeriod(progressPeriod)
                 .build();
+    }
+
+    private long calculateDaysBetween(LocalDate start, LocalDate end) {
+        return Duration.between(start.atStartOfDay(), end.atStartOfDay()).toDays();
     }
 
     private User findUserById(UUID userId) {
