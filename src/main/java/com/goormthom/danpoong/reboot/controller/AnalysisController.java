@@ -4,6 +4,7 @@ import com.goormthom.danpoong.reboot.annotation.UserId;
 import com.goormthom.danpoong.reboot.controller.docs.AnalysisDocs;
 import com.goormthom.danpoong.reboot.dto.common.ResponseDto;
 import com.goormthom.danpoong.reboot.usecase.analysis.JournalUseCase;
+import com.goormthom.danpoong.reboot.usecase.analysis.MissionListUseCase;
 import com.goormthom.danpoong.reboot.usecase.analysis.RemainPeriodUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ public class AnalysisController implements AnalysisDocs {
 
     private final RemainPeriodUseCase remainPeriodUseCase;
     private final JournalUseCase journalUseCase;
+    private final MissionListUseCase missionListUseCase;
 
     @GetMapping("/remain-period")
     public ResponseDto<?> getRemainPeriod(@UserId UUID userId) {
@@ -28,5 +30,10 @@ public class AnalysisController implements AnalysisDocs {
     @GetMapping("/journal")
     public ResponseDto<?> getJournal(@UserId UUID userId) {
         return ResponseDto.ok(journalUseCase.execute(userId));
+    }
+
+    @GetMapping("/list")
+    public ResponseDto<?> getMissionList(@UserId UUID userId) {
+        return ResponseDto.ok(missionListUseCase.execute(userId));
     }
 }
