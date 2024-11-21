@@ -1,6 +1,7 @@
 package com.goormthom.danpoong.reboot.controller;
 
 import com.goormthom.danpoong.reboot.annotation.UserId;
+import com.goormthom.danpoong.reboot.controller.docs.ChatDocs;
 import com.goormthom.danpoong.reboot.dto.common.ResponseDto;
 import com.goormthom.danpoong.reboot.dto.request.CreateChatRequestDto;
 import com.goormthom.danpoong.reboot.usecase.chat.CreateChatUseCase;
@@ -25,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/chats")
-public class ChatController {
+public class ChatController implements ChatDocs {
     private final S3Util s3Util;
     private final CreateChatUseCase createChatUseCase;
     private final ReadChatRoomUseCase readChatRoomUseCase;
@@ -42,7 +43,7 @@ public class ChatController {
     }
 
     @GetMapping("")
-    public ResponseDto<?> getChats(
+    public ResponseDto<?> getChatRooms(
             @UserId UUID userId
     ) {
         return ResponseDto.ok(readChatRoomUseCase.execute(userId));

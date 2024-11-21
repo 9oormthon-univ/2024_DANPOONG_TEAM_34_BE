@@ -5,9 +5,11 @@ import com.goormthom.danpoong.reboot.dto.common.ExceptionDto;
 import com.goormthom.danpoong.reboot.dto.common.ResponseDto;
 import com.goormthom.danpoong.reboot.dto.response.JournalResponseDto;
 import com.goormthom.danpoong.reboot.dto.response.MissionListResponseDto;
+import com.goormthom.danpoong.reboot.dto.response.ReadChatResponseDto;
 import com.goormthom.danpoong.reboot.dto.response.RemainPeriodResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -116,7 +118,12 @@ public interface AnalysisDocs {
                         - 미션 목록 조회 성공.
                         - 사용자의 미션 목록이 포함된 응답 데이터 반환.
                         """,
-                    content = @Content(schema = @Schema(implementation = MissionListResponseDto.class), mediaType = "application/json")
+
+                    content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = MissionListResponseDto.class),
+                    array = @ArraySchema(schema = @Schema(implementation = MissionListResponseDto.class))
+                    )
             ),
             @ApiResponse(
                     responseCode = "401",
