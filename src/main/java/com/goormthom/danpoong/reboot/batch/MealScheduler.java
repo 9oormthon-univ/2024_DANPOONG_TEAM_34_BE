@@ -19,13 +19,13 @@ public class MealScheduler {
         mealSchedulerUseCase.execute(EChatType.MORNING);
     }
 
-    @Scheduled(cron = "0 0 12 * * *")
+    @Scheduled(cron = "0 0 11 * * *")
     public void lunchTask() {
         log.info("lunchTask Running");
         mealSchedulerUseCase.execute(EChatType.LUNCH);
     }
 
-    @Scheduled(cron = "0 0 19 * * *")
+    @Scheduled(cron = "0 0 16 * * *")
     public void dinnerTask() {
         log.info("dinnerTask Running");
         mealSchedulerUseCase.execute(EChatType.DINNER);
