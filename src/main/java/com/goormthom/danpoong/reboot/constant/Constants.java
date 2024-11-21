@@ -11,6 +11,8 @@ public class Constants {
     public static String ON_BOARDING = "onboarding";
     public static String REGISTER = "register";
     public static String HOME = "home";
+    public static String dirName = "reboot/";
+    public static String MISSION = "미션은 ";
 
     public static List<String> NO_NEED_AUTH_URLS = List.of(
             "/auth/reissue",

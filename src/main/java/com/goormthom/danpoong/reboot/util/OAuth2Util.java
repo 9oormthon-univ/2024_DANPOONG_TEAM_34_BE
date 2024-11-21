@@ -78,7 +78,7 @@ public class OAuth2Util {
         String id = response.get("id").toString();
         String nickname = profile.get("nickname");
         String email = kakaoAccount.get("email").toString();
-        System.err.println(email);
+
         if (response.get("id") == null || response.get("properties") == null)
             throw new CommonException(ErrorCode.EXTERNAL_SERVER_ERROR);
 
