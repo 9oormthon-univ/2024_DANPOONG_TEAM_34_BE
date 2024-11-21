@@ -3,6 +3,9 @@ package com.goormthom.danpoong.reboot.repository;
 import com.goormthom.danpoong.reboot.domain.User;
 import com.goormthom.danpoong.reboot.domain.type.EProvider;
 import com.goormthom.danpoong.reboot.domain.type.ERole;
+
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,6 +33,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Modifying(clearAutomatically = true)
     @Query("update User u set u.refreshToken = :refreshToken where u.id = :id")
     void updateRefreshToken(UUID id, String refreshToken);
+
+    @Query("SELECT u.id FROM User u WHERE u.attendanceTime IS NOT NULL AND u.workEndTime > :currentDate")
+    List<UUID> findActiveUserIds(LocalDate currentDate);
+
 
     interface UserSecurityForm {
         UUID getId();

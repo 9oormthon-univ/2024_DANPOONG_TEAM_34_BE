@@ -7,6 +7,7 @@ import com.goormthom.danpoong.reboot.exception.CommonException;
 import com.goormthom.danpoong.reboot.exception.ErrorCode;
 import com.goormthom.danpoong.reboot.repository.MealRepository;
 import com.goormthom.danpoong.reboot.repository.UserRepository;
+import com.goormthom.danpoong.reboot.batch.DynamicTaskScheduler;
 import com.goormthom.danpoong.reboot.usecase.user.CreateRegisterUseCase;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CreateRegisterService implements CreateRegisterUseCase {
     private final UserRepository userRepository;
     private final MealRepository mealRepository;
-
+    private final DynamicTaskScheduler dynamicTaskScheduler;
     @Override
     public Boolean execute(CreateRegisterRequestDto createRegisterRequestDto, UUID userId) {
         User user = userRepository.findById(userId)
@@ -29,6 +30,7 @@ public class CreateRegisterService implements CreateRegisterUseCase {
 
         createRegisterRequestDto.mealTimeList()
                 .forEach(createMealRequestDto -> mealRepository.save(Meal.toEntity(user, createMealRequestDto.mealTime())));
+        dynamicTaskScheduler.scheduleSingleUserTask(user);
 
         return true;
     }
