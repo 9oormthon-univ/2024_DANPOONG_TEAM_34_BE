@@ -3,6 +3,8 @@ package com.goormthom.danpoong.reboot.controller;
 import com.goormthom.danpoong.reboot.annotation.UserId;
 import com.goormthom.danpoong.reboot.controller.docs.AnalysisDocs;
 import com.goormthom.danpoong.reboot.dto.common.ResponseDto;
+import com.goormthom.danpoong.reboot.dto.response.AllAnalysisResponseDto;
+import com.goormthom.danpoong.reboot.usecase.analysis.AllAnalysisUseCase;
 import com.goormthom.danpoong.reboot.usecase.analysis.JournalUseCase;
 import com.goormthom.danpoong.reboot.usecase.analysis.MissionListUseCase;
 import com.goormthom.danpoong.reboot.usecase.analysis.RemainPeriodUseCase;
@@ -21,6 +23,7 @@ public class AnalysisController implements AnalysisDocs {
     private final RemainPeriodUseCase remainPeriodUseCase;
     private final JournalUseCase journalUseCase;
     private final MissionListUseCase missionListUseCase;
+    private final AllAnalysisUseCase allAnalysisUseCase;
 
     @GetMapping("/remain-period")
     public ResponseDto<?> getRemainPeriod(@UserId UUID userId) {
@@ -35,5 +38,10 @@ public class AnalysisController implements AnalysisDocs {
     @GetMapping("/list")
     public ResponseDto<?> getMissionList(@UserId UUID userId) {
         return ResponseDto.ok(missionListUseCase.execute(userId));
+    }
+
+    @GetMapping("/all")
+    public ResponseDto<?> getAllAnalysis(@UserId UUID userId) {
+        return ResponseDto.ok(allAnalysisUseCase.execute(userId));
     }
 }
