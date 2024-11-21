@@ -32,7 +32,6 @@ public class S3Util {
 
     // S3 파일 업로드
     public String upload(MultipartFile multipartFile) {
-        System.err.println(multipartFile);
         // MultipartFile -> File
         File convertFile;
         try {
@@ -44,8 +43,6 @@ public class S3Util {
 
         // S3에 저장할 파일명
         String fileName = Constants.dirName + UUID.randomUUID() + "_" + convertFile.getName();
-        System.err.println(fileName);
-        System.err.println(bucket);
 
         // S3에 파일 업로드
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, convertFile).withCannedAcl(
@@ -70,7 +67,7 @@ public class S3Util {
     private Optional<File> convert(MultipartFile file) throws IOException {
         File convertFile = new File(System.getProperty("user.dir") + "/" + file.getOriginalFilename());
 
-        System.err.println(convertFile);
+
         if (convertFile.createNewFile()) {
             try (FileOutputStream fos = new FileOutputStream(convertFile)) {
                 fos.write(file.getBytes());
