@@ -3,6 +3,7 @@ package com.goormthom.danpoong.reboot.domain;
 import com.goormthom.danpoong.reboot.domain.type.EChatType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,4 +27,11 @@ public class ChatRoom {
     @Enumerated(EnumType.STRING)
     @Column(name = "chat_type")
     private EChatType chatType;
+
+    @Builder
+    public ChatRoom(User user, String title, EChatType chatType) {
+        this.user = user;
+        this.title = title;
+        this.chatType = chatType;
+    }
 }
