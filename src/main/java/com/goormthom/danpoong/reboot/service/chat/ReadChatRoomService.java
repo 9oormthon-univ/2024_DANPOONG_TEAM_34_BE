@@ -52,10 +52,7 @@ public class ReadChatRoomService implements ReadChatRoomUseCase {
     private String checkMessage(ChatRoom chatRoom) {
         Optional<Chat> chatRecent = chatRepository.findTopByChatRoomIdOrderByCreatedAtDesc(chatRoom.getId());
         return chatRecent.flatMap(chat ->
-                Optional.ofNullable(chat.getSpeaker())
-                        .map(speaker -> speaker == ESpeaker.USER
-                                ? chat.getChatContent()
-                                : chat.getResponseContent())
+                Optional.ofNullable(chat.getResponseContent())
         ).orElse("아직 메세지가 없습니다.");
     }
 

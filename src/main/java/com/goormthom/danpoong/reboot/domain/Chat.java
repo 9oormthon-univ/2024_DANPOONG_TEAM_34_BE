@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -15,15 +16,13 @@ import java.time.LocalDate;
 @Getter
 @Document(collection = "chats")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicUpdate
 public class Chat {
     @Id
     private String id;
 
     @Field(name = "chat_room_id")
     private Long chatRoomId;
-
-    @Field(name = "chat_content")
-    private String chatContent;
 
     @Field(name = "image_url")
     private String imageUrl;
@@ -40,32 +39,32 @@ public class Chat {
     @Field(name = "is_read")
     private Boolean isRead;
 
+    @Field(name = "is_completed")
+    private Boolean isCompleted;
+
     @Builder
-    public Chat(Long chatRoomId, String chatContent, String imageUrl, String responseContent, ESpeaker speaker, Boolean isRead) {
+    public Chat(Long chatRoomId, String imageUrl, String responseContent, ESpeaker speaker, Boolean isRead, Boolean isCompleted) {
         this.chatRoomId = chatRoomId;
-        this.chatContent = chatContent;
         this.imageUrl = imageUrl;
         this.responseContent = responseContent;
         this.createdAt = LocalDateTime.now().plusHours(9);
         this.speaker = speaker;
         this.isRead = isRead;
+        this.isCompleted = isCompleted;
     }
-    public static Chat toEntityQuestion(Long chatRoomId, String chatContent, String imageUrl) {
-        return Chat.builder()
-                .chatRoomId(chatRoomId)
-                .chatContent(chatContent)
-                .imageUrl(imageUrl)
-                .speaker(ESpeaker.USER)
-                .isRead(true)
-                .build();
-    }
-
-    public static Chat toEntityAnswer(Long chatRoomId, String responseContent) {
+    public static Chat toEntity(Long chatRoomId, String responseContent, String imageUrl, ESpeaker speaker, Boolean isCompleted) {
         return Chat.builder()
                 .chatRoomId(chatRoomId)
                 .responseContent(responseContent)
-                .speaker(ESpeaker.AI)
+                .imageUrl(imageUrl)
+                .speaker(speaker)
                 .isRead(true)
+                .isCompleted(isCompleted)
                 .build();
     }
+
+    public void updateIsRead() {
+        this.isRead = true;
+    }
+
 }
