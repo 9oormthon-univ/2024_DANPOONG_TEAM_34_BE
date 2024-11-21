@@ -1,5 +1,8 @@
 package com.goormthom.danpoong.reboot.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goormthom.danpoong.reboot.constant.Constants;
 import com.goormthom.danpoong.reboot.domain.type.EChatType;
 import com.goormthom.danpoong.reboot.dto.response.PromaDto;
@@ -47,9 +50,26 @@ public class PromaUtil {
         } catch (Exception e) {
             throw new CommonException(ErrorCode.EXTERNAL_SERVER_ERROR);
         }
+        System.err.println("asdfas");
         Map<String, Object> result = (Map<String, Object>) response.get("responseDto");
-        String answer = result.get("messageAnswer").toString();
+        System.err.println(result);
+        //String answer = result.get("messageAnswer").toString();
+        //Map<String, Object> answer1 = (Map<String, Object>)result.get("messageAnswer");
 
-        return PromaDto.of(answer);
+        //Map<String, Object> messageAnswer = (Map<String, Object>) result.get("messageAnswer");
+
+// JSON 문자열 파싱
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = null;
+        try {
+            jsonNode = objectMapper.readTree((String) result.get("messageAnswer"));
+        } catch (JsonProcessingException e) {
+            throw new CommonException(ErrorCode.EXTERNAL_SERVER_ERROR);
+        }
+
+        String answer = jsonNode.get("answer").asText();
+        Boolean isComplete = jsonNode.get("isComplete").asBoolean();
+
+        return PromaDto.of(answer, isComplete);
     }
 }
