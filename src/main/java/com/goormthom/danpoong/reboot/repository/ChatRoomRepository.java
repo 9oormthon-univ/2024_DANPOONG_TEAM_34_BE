@@ -8,10 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
+public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long>, ChatRoomCustomRepository {
     List<ChatRoom> findByUser(User user);
-
-    Optional<ChatRoom> findByUserAndChatType(User user, EChatType chatType);
-
     Optional<ChatRoom> findByUserAndId(User user, Long id);
+
+    List<ChatRoom> findAllByUserInAndChatType(List<User> list, EChatType chatType);
 }
