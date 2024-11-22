@@ -112,14 +112,14 @@ public class DynamicTaskScheduler {
     private ChatRoom getOrCreateChatRoom(User user, Map<UUID, Map<EChatType, ChatRoom>> preloadedChatRooms) {
         return preloadedChatRooms
                 .computeIfAbsent(user.getId(), id -> new HashMap<>())
-                .computeIfAbsent(EChatType.RISE, type -> createChatRoom(user));
+                .computeIfAbsent(EChatType.FOLD, type -> createChatRoom(user));
     }
 
     private ChatRoom createChatRoom(User user) {
         return chatRoomRepository.save(
                 ChatRoom.builder()
                         .user(user)
-                        .chatType(EChatType.RISE)
+                        .chatType(EChatType.FOLD)
                         .title("일상회복팀 리부트대리")
                         .build()
         );
