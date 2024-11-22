@@ -15,6 +15,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,8 +36,8 @@ public class ChatController implements ChatDocs {
 
     @PostMapping( "")
     public ResponseDto<?> createChat(
-            @Valid  @RequestBody CreateChatRequestDto createChatRequestDto,
-            @RequestParam("image") MultipartFile file,
+            @Valid  @RequestPart("request") CreateChatRequestDto createChatRequestDto,
+            @RequestPart("image") MultipartFile file,
             @UserId UUID userId
     ) {
         String url = s3Util.upload(file);
