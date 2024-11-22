@@ -22,5 +22,7 @@ public interface ChatRepository extends MongoRepository<Chat, String> {
 
     List<Chat> findByChatRoomIdAndCreatedAtBetween(Long id, LocalDateTime startTime, LocalDateTime endTime);
 
+    List<Chat> findByChatRoomIdAndCreatedAtBetween(List<Long> id, LocalDateTime startTime, LocalDateTime endTime);
+
     List<Chat> findByChatRoomIdAndSpeakerAndCreatedAtBetween(Long chatroomId, ESpeaker speaker, LocalDateTime startTime, LocalDateTime endTime);
 }
