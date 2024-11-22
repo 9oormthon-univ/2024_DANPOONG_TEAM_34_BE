@@ -1,6 +1,8 @@
 package com.goormthom.danpoong.reboot.repository;
 
 import com.goormthom.danpoong.reboot.domain.Chat;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -15,4 +17,5 @@ public interface ChatRepository extends MongoRepository<Chat, String> {
 
     List<Chat> findByChatRoomIdOrderByCreatedAtAsc(Long chatroomId);
 
+    List<Chat> findByChatRoomIdAndCreatedAtBetween(Long id, LocalDateTime startTime, LocalDateTime endTime);
 }
