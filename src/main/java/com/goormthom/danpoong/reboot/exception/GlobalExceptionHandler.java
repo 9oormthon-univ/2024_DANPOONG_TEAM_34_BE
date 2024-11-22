@@ -77,6 +77,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = {MultipartException.class})
     public ResponseDto<?> handleMultipartException(MultipartException e) {
         log.error("MultipartException: {}", e.getMessage());
+        e.getCause().printStackTrace();
         return ResponseDto.fail(new CommonException(ErrorCode.BAD_REQUEST_MULTI));
     }
 }
