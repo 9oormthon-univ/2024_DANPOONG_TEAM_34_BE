@@ -36,8 +36,8 @@ public class ChatController implements ChatDocs {
 
     @PostMapping( "")
     public ResponseDto<?> createChat(
-            @Valid  @RequestBody CreateChatRequestDto createChatRequestDto,
-            @RequestParam("image") MultipartFile file,
+            @Valid  @RequestPart CreateChatRequestDto createChatRequestDto,
+            @RequestPart("image") MultipartFile file,
             @UserId UUID userId
     ) {
         String url = s3Util.upload(file);
