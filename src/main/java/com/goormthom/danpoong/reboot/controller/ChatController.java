@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,8 +35,8 @@ public class ChatController implements ChatDocs {
 
     @PostMapping( "")
     public ResponseDto<?> createChat(
-            @Valid  @RequestPart(value = "request") CreateChatRequestDto createChatRequestDto,
-            @RequestPart(value = "image") MultipartFile file,
+            @Valid  @RequestBody CreateChatRequestDto createChatRequestDto,
+            @RequestParam("image") MultipartFile file,
             @UserId UUID userId
     ) {
         String url = s3Util.upload(file);
