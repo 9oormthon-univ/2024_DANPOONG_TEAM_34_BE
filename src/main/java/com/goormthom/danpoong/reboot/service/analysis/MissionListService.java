@@ -13,7 +13,9 @@ import com.goormthom.danpoong.reboot.repository.ChatRoomRepository;
 import com.goormthom.danpoong.reboot.repository.UserRepository;
 import com.goormthom.danpoong.reboot.usecase.analysis.MissionListUseCase;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,6 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MissionListService implements MissionListUseCase {
@@ -31,35 +34,52 @@ public class MissionListService implements MissionListUseCase {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public List<MissionListResponseDto> execute(UUID userId) {
         User user = findUserById(userId);
-
-        // 사용자의 모든 ChatRoom 조회
-        List<ChatRoom> chatRooms = chatRoomRepository.findByUser(user);
-
-        // 사용자의 기상시간 가져오기
-        LocalTime wakeUpTime = user.getAttendanceTime(); // User 엔티티에서 기상시간 반환
-
-        return chatRooms.stream()
-                .map(chatRoom -> evaluateMission(chatRoom, LocalDate.now(), wakeUpTime))
-                .sorted(Comparator.comparing(dto -> dto.mission().weight())) // weight 기준 오름차순 정렬
+        LocalTime wakeUpTime = user.getAttendanceTime();
+        return chatRoomRepository.findByUser(user).stream()
+                .map(chatRoom -> mapToMissionListResponse(chatRoom, LocalDate.now(), wakeUpTime))
+                .sorted(Comparator.comparing(dto -> dto.mission().weight()))
                 .toList();
     }
 
-    private MissionListResponseDto evaluateMission(ChatRoom chatRoom, LocalDate attendanceDate, LocalTime wakeUpTime) {
-        EChatType chatType = chatRoom.getChatType();
+    private MissionListResponseDto mapToMissionListResponse(ChatRoom chatRoom, LocalDate date, LocalTime wakeUpTime) {
+        LocalDateTime startTime = getStartTime(chatRoom.getChatType(), date, wakeUpTime);
+        LocalDateTime endTime = getEndTime(chatRoom.getChatType(), date, wakeUpTime);
+        EMissionStatus status = evaluateMissionStatus(chatRoom, startTime, endTime);
+        return buildMissionListResponseDto(chatRoom.getChatType(), startTime, endTime, status);
+    }
 
-        // 미션의 인증 가능 시작/마감 시간 계산
-        LocalDateTime startTime = calculateStartTime(chatType, attendanceDate, wakeUpTime);
-        LocalDateTime endTime = calculateEndTime(chatType, attendanceDate, wakeUpTime);
+    private LocalDateTime getStartTime(EChatType chatType, LocalDate date, LocalTime wakeUpTime) {
+        return switch (chatType) {
+            case FOLD -> date.atTime(wakeUpTime);
+            case MORNING -> date.atTime(9, 0);
+            case LUNCH -> date.atTime(12, 0);
+            case DINNER -> date.atTime(17, 0);
+            case WALK, MARKET, PICTURE -> date.atTime(15, 0);
+            case LEAVE -> date.atTime(20, 0);
+        };
+    }
 
-        // 미션 관련 Chat 조회
-        List<Chat> chats = chatRepository.findByChatRoomIdAndCreatedAtBetween(
-                chatRoom.getId(), startTime, endTime
-        );
+    private LocalDateTime getEndTime(EChatType chatType, LocalDate date, LocalTime wakeUpTime) {
+        return switch (chatType) {
+            case FOLD -> date.atTime(wakeUpTime.plusMinutes(30));
+            case MORNING -> date.atTime(10, 0);
+            case LUNCH -> date.atTime(13, 0);
+            case DINNER -> date.atTime(20, 0);
+            case WALK, MARKET, PICTURE -> date.atTime(16, 0);
+            case LEAVE -> date.atTime(21, 0);
+        };
+    }
 
-        EMissionStatus status = determineMissionStatus(chats);
+    private EMissionStatus evaluateMissionStatus(ChatRoom chatRoom, LocalDateTime startTime, LocalDateTime endTime) {
+        return chatRepository.findByChatRoomIdAndCreatedAtBetween(chatRoom.getId(), startTime.plusHours(9), endTime.plusHours(9)).stream()
+                .filter(chat -> chat.getIsCompleted() != null)
+                .anyMatch(Chat::getIsCompleted) ? EMissionStatus.SUCCESS : EMissionStatus.FAIL;
+    }
 
+    private MissionListResponseDto buildMissionListResponseDto(EChatType chatType, LocalDateTime startTime, LocalDateTime endTime, EMissionStatus status) {
         return MissionListResponseDto.builder()
                 .mission(chatType)
                 .startTime(startTime)
@@ -68,46 +88,9 @@ public class MissionListService implements MissionListUseCase {
                 .build();
     }
 
-    private LocalDateTime calculateStartTime(EChatType chatType, LocalDate attendanceDate, LocalTime wakeUpTime) {
-        return switch (chatType) {
-            case FOLD -> attendanceDate.atTime(wakeUpTime); // 기상시간
-            case MORNING -> attendanceDate.atTime(9, 0); // 아침 식사 고정 시간
-            case LUNCH -> attendanceDate.atTime(12, 0); // 점심 식사 고정 시간
-            case DINNER -> attendanceDate.atTime(17, 0); // 저녁 식사 고정 시간
-            case WALK, MARKET, PICTURE -> attendanceDate.atTime(15, 0); // 걷기, 장보기, 출사 고정 시간
-            case LEAVE -> attendanceDate.atTime(20, 0); // 퇴근 고정 시간
-        };
-    }
-
-    private LocalDateTime calculateEndTime(EChatType chatType, LocalDate attendanceDate, LocalTime wakeUpTime) {
-        return switch (chatType) {
-            case FOLD -> attendanceDate.atTime(wakeUpTime.plusMinutes(30)); // 기상시간 + 30분
-            case MORNING -> attendanceDate.atTime(10, 0); // 아침 마감
-            case LUNCH -> attendanceDate.atTime(13, 0); // 점심 마감
-            case DINNER -> attendanceDate.atTime(20, 0); // 저녁 마감
-            case WALK, MARKET, PICTURE -> attendanceDate.atTime(16, 0); // 걷기, 장보기, 출사 마감
-            case LEAVE -> attendanceDate.atTime(21, 0); // 퇴근 마감
-        };
-    }
-
-    private EMissionStatus determineMissionStatus(List<Chat> chats) {
-        if (chats.isEmpty()) {
-            return EMissionStatus.FAIL; // X
-        }
-
-        boolean isCompleted = chats.stream().anyMatch(Chat::getIsCompleted); // 사진 판별 성공 여부
-        if (isCompleted) {
-            return EMissionStatus.SUCCESS; // O
-        }
-
-        // 인증 가능 시간 내 메시지가 있지만 사진 판별 실패한 경우
-        return EMissionStatus.UNCLEAR; // 세모
-    }
-
     private User findUserById(UUID userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
     }
 }
-
 
