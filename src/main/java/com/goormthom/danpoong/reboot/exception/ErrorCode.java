@@ -26,6 +26,7 @@ public enum ErrorCode {
     BAD_REQUEST_PARAMETER(40005, HttpStatus.BAD_REQUEST, "잘못된 요청 파라미터입니다."),
     UNSUPPORTED_MEDIA_TYPE(40006, HttpStatus.BAD_REQUEST, "지원하지 않는 미디어 타입입니다."),
     BAD_REQUEST_JSON(40006, HttpStatus.BAD_REQUEST, "잘못된 JSON 형식입니다."),
+    BAD_REQUEST_MULTI(40007, HttpStatus.BAD_REQUEST, "멀티파트 오류"),
 
     // Access Denied Error
     ACCESS_DENIED(40300, HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),

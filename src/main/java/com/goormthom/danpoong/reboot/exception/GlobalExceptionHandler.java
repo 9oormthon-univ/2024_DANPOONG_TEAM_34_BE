@@ -11,6 +11,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 @Slf4j
@@ -71,5 +72,11 @@ public class GlobalExceptionHandler {
         log.error("GlobalExceptionHandler catch Exception : {}", e.getMessage());
         e.printStackTrace();
         return ResponseDto.fail(new CommonException(ErrorCode.INTERNAL_SERVER_ERROR));
+    }
+
+    @ExceptionHandler(value = {MultipartException.class})
+    public ResponseDto<?> handleMultipartException(MultipartException e) {
+        log.error("MultipartException: {}", e.getMessage());
+        return ResponseDto.fail(new CommonException(ErrorCode.BAD_REQUEST_MULTI));
     }
 }
