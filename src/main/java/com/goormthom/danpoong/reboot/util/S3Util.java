@@ -56,13 +56,6 @@ public class S3Util {
         return uploadImageUrl;
     }
 
-    // S3 파일 삭제
-    public String delete(String fileUrl) {
-        String objectKey = extractObjectKey(fileUrl);
-        amazonS3Client.deleteObject(bucket, "pm4/" + objectKey);
-        return objectKey;
-    }
-
     // 파일 convert 후 로컬에 업로드
     private Optional<File> convert(MultipartFile file) throws IOException {
         File convertFile = new File(System.getProperty("user.dir") + "/" + file.getOriginalFilename());
@@ -75,28 +68,5 @@ public class S3Util {
             return Optional.of(convertFile);
         }
         return Optional.empty();
-    }
-
-
-    //url을 받아
-    private String extractObjectKey(String fileUrl) {
-        try {
-
-            URL url = new URL(fileUrl);
-
-            String path = url.getPath();
-            String decodedPath = URLDecoder.decode(path, StandardCharsets.UTF_8);
-
-            String[] pathSegments = decodedPath.split("/");
-            if (pathSegments.length >= 2) {
-                return String.join("/", Arrays.copyOfRange(pathSegments, 2,
-                        pathSegments.length)); // Skip the first two segments (empty and the bucket name)
-            }
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-        return null; // 추출 실패 시 null 반환
     }
 }
