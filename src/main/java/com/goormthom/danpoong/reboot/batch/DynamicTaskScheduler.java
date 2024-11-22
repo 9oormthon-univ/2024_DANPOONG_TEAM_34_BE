@@ -98,11 +98,13 @@ public class DynamicTaskScheduler {
         String endTime = user.getAttendanceTime().plusHours(1).format(DateTimeFormatter.ofPattern("HH:mm"));
 
         return List.of(
-                String.format("안녕하세요 %s님, 출근하셨나요?", nickname),
-                String.format("(%s ~ %s) 출근을 환영합니다! 이불 개는 사진을 보내주세요!", startTime, endTime),
+                String.format("안녕하세요 %s 인턴님! 오늘도 좋은 하루를 시작하기 위해 첫 업무를 안내드립니다.", nickname),
+                String.format("업무: 침대 정리하기(%s ~ %s)", startTime, endTime),
+                "업무 공간을 깔끔하게 유지하는 것은 업무 효율을 높이는 첫걸음입니다. 이불을 정리하고 깨끗한 환경에서 업무를 시작해 주세요! 이불 정리 후 세안하신 다음에 업무 보고 부탁드립니다. 오늘도 멋진 하루 되시길 바랍니다!",
                 "오늘도 좋은 하루 되세요!"
         );
     }
+
 
     private void sendMessage(User user, String message, Map<UUID, Map<EChatType, ChatRoom>> preloadedChatRooms) {
         ChatRoom chatRoom = getOrCreateChatRoom(user, preloadedChatRooms);
