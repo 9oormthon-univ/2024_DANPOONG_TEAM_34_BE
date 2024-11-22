@@ -2,6 +2,7 @@ package com.goormthom.danpoong.reboot.controller;
 
 import com.goormthom.danpoong.reboot.annotation.UserId;
 import com.goormthom.danpoong.reboot.controller.docs.ChatDocs;
+import com.goormthom.danpoong.reboot.domain.type.EChatType;
 import com.goormthom.danpoong.reboot.dto.common.ResponseDto;
 import com.goormthom.danpoong.reboot.dto.request.CreateChatRequestDto;
 import com.goormthom.danpoong.reboot.usecase.chat.CreateChatUseCase;
@@ -28,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/chats")
-public class ChatController implements ChatDocs {
+public class ChatController {
     private final S3Util s3Util;
     private final CreateChatUseCase createChatUseCase;
     private final ReadChatRoomUseCase readChatRoomUseCase;
@@ -36,12 +37,14 @@ public class ChatController implements ChatDocs {
 
     @PostMapping( "")
     public ResponseDto<?> createChat(
-            @Valid  @RequestPart CreateChatRequestDto createChatRequestDto,
+            @RequestParam("question") String question,
+            @RequestParam("eChatType") EChatType eChatType,
+            //@Valid  @RequestPart CreateChatRequestDto createChatRequestDto,
             @RequestPart("image") MultipartFile file,
             @UserId UUID userId
     ) {
         String url = s3Util.upload(file);
-        return ResponseDto.ok(createChatUseCase.execute(createChatRequestDto, url, userId));
+        return ResponseDto.ok(createChatUseCase.execute(question, eChatType, url, userId));
     }
 
     @GetMapping("")
