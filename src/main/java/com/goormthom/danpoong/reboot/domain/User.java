@@ -111,8 +111,8 @@ public class User {
 
     public void updateRegister(CreateRegisterRequestDto createRegisterRequestDto) {
         this.joinDate = LocalDate.now();
-        this.workStartTime = createRegisterRequestDto.workStartTime();
-        this.workEndTime = createRegisterRequestDto.workStartTime().plusDays(createRegisterRequestDto.partTime());
+        this.workStartTime = LocalDate.now();
+        this.workEndTime = LocalDate.now().plusDays(createRegisterRequestDto.partTime()-1);
         this.attendanceTime = createRegisterRequestDto.attendanceTime();
         this.isOutside = createRegisterRequestDto.isOutside();
     }
