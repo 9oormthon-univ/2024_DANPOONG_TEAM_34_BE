@@ -49,6 +49,7 @@ public class CreateChatService implements CreateChatUseCase {
                 .chatContent(promaDto.messageAnswer())
                 .createAt(answerChat.getCreatedAt())
                 .speaker(ESpeaker.AI)
+                .isCompleted(promaDto.isCompleted())
                 .build();
     }
 }

@@ -13,14 +13,17 @@ public record ReadChatResponseDto(
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm::ss")
         LocalDateTime createAt,
 
-        ESpeaker speaker
+        ESpeaker speaker,
+
+        Boolean isCompleted
 ) {
     @Builder
-    public ReadChatResponseDto(String chatContent, String imageUrl, LocalDateTime createAt, ESpeaker speaker) {
+    public ReadChatResponseDto(String chatContent, String imageUrl, LocalDateTime createAt, ESpeaker speaker, Boolean isCompleted) {
         this.chatContent = chatContent;
         this.imageUrl = imageUrl;
         this.createAt = createAt;
         this.speaker = speaker;
+        this.isCompleted = isCompleted;
     }
 
 }
