@@ -48,6 +48,9 @@ public class User {
     @Column(name =  "nickname", nullable = false)
     private String nickname;
 
+    @Column(name = "name_en")
+    private String nameEn;
+
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -99,7 +102,8 @@ public class User {
     //------------------------------------
 
     public void updateOnboard(CreateOnBoardingRequestDto createOnBoardingRequestDto) {
-        this.nickname = createOnBoardingRequestDto.nickname();
+        this.nickname = createOnBoardingRequestDto.name();
+        this.nameEn = createOnBoardingRequestDto.nameEn();
         this.gender = createOnBoardingRequestDto.gender();
         this.birthDate = createOnBoardingRequestDto.birthday();
         this.motivation = createOnBoardingRequestDto.motivation();

@@ -21,6 +21,9 @@ public class ReadUserService implements ReadUserUseCase {
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RESOURCE));
 
         return UserDetailDto.builder()
-                .nickname(user.getNickname()).build();
+                .name(user.getNickname())
+                .nameEn(user.getNameEn())
+                .email(user.getEmail())
+                .build();
     }
 }
