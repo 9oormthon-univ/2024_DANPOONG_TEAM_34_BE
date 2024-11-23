@@ -1,5 +1,6 @@
 package com.goormthom.danpoong.reboot.service.scheduler;
 
+import com.goormthom.danpoong.reboot.constant.Constants;
 import com.goormthom.danpoong.reboot.domain.Chat;
 import com.goormthom.danpoong.reboot.domain.ChatRoom;
 import com.goormthom.danpoong.reboot.domain.User;
@@ -72,7 +73,7 @@ public class OutsideSchedulerService implements OutsideSchedulerUseCase {
         ChatRoom chatRoom = ChatRoom.builder()
                 .user(user)
                 .chatType(chatType)
-                .title("일상회복팀 리부트대리")
+                .title(String.format(Constants.TEAM, chatType.chatTitle()))
                 .build();
         return chatRoomRepository.save(chatRoom);
     }
@@ -88,17 +89,17 @@ public class OutsideSchedulerService implements OutsideSchedulerUseCase {
         String userName = chatRoom.getUser().getNickname();
         return switch (chatRoom.getChatType()) {
             case WALK -> List.of(
-                    String.format("안녕하세요 %s님, 일상회복팀 리부트대리입니다.", userName),
+                    String.format("안녕하세요 %s님, %s입니다.", userName, chatRoom.getTitle()),
                     "(15:00~16:00) 산책을 하며 신선한 공기를 느껴보세요. 활동 완료 후 사진과 함께 느낀 점을 공유해주세요!",
                     "오늘 하루도 활기차게 보내시길 바랍니다!"
             );
             case PICTURE -> List.of(
-                    String.format("안녕하세요 %s님, 일상회복팀 리부트대리입니다.", userName),
+                    String.format("안녕하세요 %s님, %s입니다.", userName, chatRoom.getTitle()),
                     "(15:00~16:00) 주제를 정해 사진을 찍어보세요. 찍은 사진을 공유하며 창의력을 발휘해보세요!",
                     "활동을 통해 다양한 시각을 발견하시길 바랍니다!"
             );
             case MARKET -> List.of(
-                    String.format("안녕하세요 %s님, 일상회복팀 리부트대리입니다.", userName),
+                    String.format("안녕하세요 %s님, %s입니다.", userName, chatRoom.getTitle()),
                     "(15:00~16:00) 편의점이나 마트를 방문해 필요한 물품을 구매해보세요. 구매한 물품과 소감도 함께 공유 부탁드립니다!",
                     "즐거운 쇼핑 시간이 되시길 바랍니다!"
             );

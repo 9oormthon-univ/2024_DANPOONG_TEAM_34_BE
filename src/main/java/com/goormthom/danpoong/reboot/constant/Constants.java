@@ -13,6 +13,7 @@ public class Constants {
     public static String HOME = "home";
     public static String dirName = "reboot/";
     public static String MISSION = "미션은 ";
+    public static String TEAM = "일상회복본부 %s팀";
 
     public static List<String> NO_NEED_AUTH_URLS = List.of(
             "/auth/reissue",

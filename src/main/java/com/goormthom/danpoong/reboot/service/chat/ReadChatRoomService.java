@@ -54,25 +54,9 @@ public class ReadChatRoomService implements ReadChatRoomUseCase {
                 .createdAt(lastChatInfo.createdAt())
                 .build();
     }
-
-    private String checkMessage(ChatRoom chatRoom) {
-        Optional<Chat> chatRecent = chatRepository.findTopByChatRoomIdOrderByCreatedAtDesc(chatRoom.getId());
-        return chatRecent.flatMap(chat ->
-                Optional.ofNullable(chat.getResponseContent())
-        ).orElse("아직 메세지가 없습니다.");
-    }
-
     private Integer checkIsRead(ChatRoom chatRoom) {
         return chatRepository.countByChatRoomIdAndIsReadFalse(chatRoom.getId());
     }
-
-    private LocalTime checkTime(ChatRoom chatRoom) {
-        Optional<Chat> chatRecent = chatRepository.findTopByChatRoomIdOrderByCreatedAtDesc(chatRoom.getId());
-        return chatRecent.flatMap(chat ->
-                Optional.ofNullable(chat.getCreatedAt().toLocalTime())
-        ).orElse(null);
-    }
-
     private LastChatInfo checkChatInfo(ChatRoom chatRoom) {
         Optional<Chat> chatRecent = chatRepository.findTopByChatRoomIdOrderByCreatedAtDesc(chatRoom.getId());
         return chatRecent.map(chat ->
