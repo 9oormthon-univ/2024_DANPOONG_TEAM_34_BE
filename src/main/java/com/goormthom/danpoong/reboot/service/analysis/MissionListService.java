@@ -40,7 +40,7 @@ public class MissionListService implements MissionListUseCase {
         LocalTime wakeUpTime = user.getAttendanceTime();
         return chatRoomRepository.findByUser(user).stream()
                 .map(chatRoom -> mapToMissionListResponse(chatRoom, LocalDate.now(), wakeUpTime))
-                .sorted(Comparator.comparing(dto -> dto.mission().weight()))
+                .sorted(Comparator.comparing(MissionListResponseDto::weight))
                 .toList();
     }
 
@@ -81,7 +81,8 @@ public class MissionListService implements MissionListUseCase {
 
     private MissionListResponseDto buildMissionListResponseDto(EChatType chatType, LocalDateTime startTime, LocalDateTime endTime, EMissionStatus status) {
         return MissionListResponseDto.builder()
-                .mission(chatType)
+                .weight(chatType.weight())
+                .mission(chatType.getDescription())
                 .startTime(startTime)
                 .endTime(endTime)
                 .status(status)
