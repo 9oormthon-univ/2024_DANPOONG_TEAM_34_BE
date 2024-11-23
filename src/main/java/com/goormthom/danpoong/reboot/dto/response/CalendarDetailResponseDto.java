@@ -1,7 +1,6 @@
 package com.goormthom.danpoong.reboot.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.goormthom.danpoong.reboot.domain.type.EChatType;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
