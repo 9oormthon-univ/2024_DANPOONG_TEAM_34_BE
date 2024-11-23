@@ -6,10 +6,16 @@ import lombok.Getter;
 
 public record UserDetailDto(
         @Size(min = 1, max = 20, message = "닉네임은 1자 이상 20자 이하여야 합니다.")
-        String nickname
+        String name,
+
+        String nameEn,
+
+        String email
 ) {
     @Builder
-    public UserDetailDto(String nickname) {
-        this.nickname = nickname;
+    public UserDetailDto(String name, String nameEn, String email) {
+        this.name = name;
+        this.nameEn = nameEn;
+        this.email = email;
     }
 }

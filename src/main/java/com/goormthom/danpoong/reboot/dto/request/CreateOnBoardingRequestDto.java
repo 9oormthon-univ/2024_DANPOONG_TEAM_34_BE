@@ -8,7 +8,11 @@ import java.time.LocalDate;
 public record CreateOnBoardingRequestDto(
         @Schema(description = "닉네임", example = "단풍이")
         @NotNull(message = "이름을 입력해주세요")
-        String nickname,
+        String name,
+
+        @Schema(description = "닉네임", example = "단풍이")
+        @NotNull(message = "이름을 입력해주세요")
+        String nameEn,
 
         @Schema(description = "성별", example = "남자")
         @NotNull(message = "성별을 입력해야합니다.")
