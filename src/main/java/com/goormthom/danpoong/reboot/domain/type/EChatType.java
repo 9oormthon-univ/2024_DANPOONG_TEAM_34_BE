@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum EChatType {
-    FOLD("FOLD","이불정리하기", 1L), // 이불 정리 - 사용자 기상시간 - 기상시간 + 30분
+    FOLD("FOLD","출근하기", 1L), // 이불 정리 - 사용자 기상시간 - 기상시간 + 30분
 
     MORNING("MORNING", "아침 먹기", 2L), // 아침 - 09:00 - 10:00
     LUNCH("LUNCH","점심 먹기", 3L), // 점심 - 12:00 - 13:00

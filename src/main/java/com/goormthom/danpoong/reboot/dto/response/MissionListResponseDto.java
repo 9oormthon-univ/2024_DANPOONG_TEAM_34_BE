@@ -1,7 +1,6 @@
 package com.goormthom.danpoong.reboot.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.goormthom.danpoong.reboot.domain.type.EChatType;
 import com.goormthom.danpoong.reboot.domain.type.EMissionStatus;
 import lombok.Builder;
 
@@ -9,12 +8,13 @@ import java.time.LocalDateTime;
 
 @Builder
 public record MissionListResponseDto(
-        EChatType mission,
-        @JsonFormat(pattern = "HH:mm:ss")
+        String mission,
+        @JsonFormat(pattern = "HH:mm")
         LocalDateTime startTime,
-        @JsonFormat(pattern = "HH:mm:ss")
+        @JsonFormat(pattern = "HH:mm")
         LocalDateTime endTime,
-        EMissionStatus status
+        EMissionStatus status,
+        Long weight
 ) {
 }
 
