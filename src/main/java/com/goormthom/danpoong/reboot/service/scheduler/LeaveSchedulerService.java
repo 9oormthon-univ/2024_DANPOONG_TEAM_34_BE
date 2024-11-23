@@ -47,9 +47,8 @@ public class LeaveSchedulerService implements LeaveSchedulerUseCase {
     }
 
     private List<User> findActiveUsers() {
-        // 데이터베이스에서 필요한 사용자만 필터링
         return userRepository.findAll().stream()
-                .filter(user -> user.getWorkEndTime().isAfter(LocalDate.now()))
+                .filter(user -> user.getWorkEndTime() != null && user.getWorkEndTime().isAfter(LocalDate.now()))
                 .toList();
     }
 
