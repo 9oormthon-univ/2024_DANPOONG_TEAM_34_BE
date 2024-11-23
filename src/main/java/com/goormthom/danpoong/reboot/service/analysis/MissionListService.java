@@ -77,11 +77,16 @@ public class MissionListService implements MissionListUseCase {
     }
 
     private boolean checkMissionCompletion(List<Chat> chats, LocalDateTime startTime, LocalDateTime endTime) {
+        if (chats == null || startTime == null || endTime == null) {
+            throw new IllegalArgumentException("Input parameters cannot be null");
+        }
+
         return chats.stream()
-                .filter(chat -> chat.getCreatedAt().isAfter(startTime))
-                .filter(chat -> chat.getCreatedAt().isBefore(endTime))
-                .anyMatch(Chat::getIsCompleted);
+                .filter(chat -> chat != null && chat.getCreatedAt() != null)
+                .filter(chat -> chat.getCreatedAt().isAfter(startTime) && chat.getCreatedAt().isBefore(endTime))
+                .anyMatch(chat -> Boolean.TRUE.equals(chat.getIsCompleted()));
     }
+
 
     private EMissionStatus determineMissionStatus(boolean isMissionCompleted) {
         return isMissionCompleted ? EMissionStatus.SUCCESS : EMissionStatus.FAIL;
