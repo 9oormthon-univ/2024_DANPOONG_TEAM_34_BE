@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -95,8 +96,12 @@ public class MealSchedulerService implements MealSchedulerUseCase {
     }
 
     private boolean isEligibleForChatRoom(User user, Map<User, ChatRoom> userChatRoomMap) {
-        return userChatRoomMap.get(user) == null && user.getWorkEndTime().isAfter(LocalDate.now());
+        return userChatRoomMap.get(user) == null
+                && Optional.ofNullable(user.getWorkEndTime())
+                .map(workEndTime -> workEndTime.isAfter(LocalDate.now()))
+                .orElse(false);
     }
+
 
     private List<ChatRoom> createChatRooms(List<User> users, EChatType chatType, Map<User, ChatRoom> userChatRoomMap) {
         return users.stream()
