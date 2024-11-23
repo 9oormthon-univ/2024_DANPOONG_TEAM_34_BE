@@ -17,10 +17,6 @@ public record CreateRegisterRequestDto(
         @NotNull(message = "출근 시간을 입력하세요")
         LocalTime attendanceTime,
 
-        @Schema(description = "첫 출근 날짜", example = "2021-01-01")
-        @NotNull(message = "첫 출근 날짜를 입력하세요.")
-        LocalDate workStartTime,
-
         @Schema(description = "식사 여부")
         List<CreateMealRequestDto> mealTimeList,
 
