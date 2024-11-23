@@ -7,6 +7,7 @@ import com.goormthom.danpoong.reboot.domain.type.EChatType;
 import com.goormthom.danpoong.reboot.domain.type.ESpeaker;
 import com.goormthom.danpoong.reboot.dto.request.CreateChatRequestDto;
 import com.goormthom.danpoong.reboot.dto.response.PromaDto;
+import com.goormthom.danpoong.reboot.dto.response.ReadChatResponseDto;
 import com.goormthom.danpoong.reboot.exception.CommonException;
 import com.goormthom.danpoong.reboot.exception.ErrorCode;
 import com.goormthom.danpoong.reboot.repository.ChatRepository;
@@ -30,7 +31,7 @@ public class CreateChatService implements CreateChatUseCase {
     private final PromaUtil promaUtil;
 
     @Override
-    public PromaDto execute(String question, EChatType eChatType, String imageUrl, UUID userId) {
+    public ReadChatResponseDto execute(String question, EChatType eChatType, String imageUrl, UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
 
@@ -44,6 +45,10 @@ public class CreateChatService implements CreateChatUseCase {
         Chat answerChat = Chat.toEntity(chatRoom.getId(), promaDto.messageAnswer(), null, ESpeaker.AI, null);
         chatRepository.save(answerChat);
 
-        return promaDto;
+        return ReadChatResponseDto.builder()
+                .chatContent(promaDto.messageAnswer())
+                .createAt(answerChat.getCreatedAt())
+                .speaker(ESpeaker.AI)
+                .build();
     }
 }
