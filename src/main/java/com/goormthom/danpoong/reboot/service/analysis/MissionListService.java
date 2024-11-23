@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -38,17 +39,52 @@ public class MissionListService implements MissionListUseCase {
     public List<MissionListResponseDto> execute(UUID userId) {
         User user = findUserById(userId);
         LocalTime wakeUpTime = user.getAttendanceTime();
+        LocalDate today = LocalDate.now();
+
+        return getMissionListForUser(user, today, wakeUpTime);
+    }
+
+    private List<MissionListResponseDto> getMissionListForUser(User user, LocalDate today, LocalTime wakeUpTime) {
         return chatRoomRepository.findByUser(user).stream()
-                .map(chatRoom -> mapToMissionListResponse(chatRoom, LocalDate.now(), wakeUpTime))
+                .map(chatRoom -> processMissionForChatRoom(chatRoom, today, wakeUpTime))
+                .filter(Objects::nonNull)
                 .sorted(Comparator.comparing(MissionListResponseDto::weight))
                 .toList();
     }
 
-    private MissionListResponseDto mapToMissionListResponse(ChatRoom chatRoom, LocalDate date, LocalTime wakeUpTime) {
-        LocalDateTime startTime = getStartTime(chatRoom.getChatType(), date, wakeUpTime);
-        LocalDateTime endTime = getEndTime(chatRoom.getChatType(), date, wakeUpTime);
-        EMissionStatus status = evaluateMissionStatus(chatRoom, startTime, endTime);
+    private MissionListResponseDto processMissionForChatRoom(ChatRoom chatRoom, LocalDate today, LocalTime wakeUpTime) {
+        LocalDateTime startTime = getStartTime(chatRoom.getChatType(), today, wakeUpTime);
+        LocalDateTime endTime = getEndTime(chatRoom.getChatType(), today, wakeUpTime);
+
+        List<Chat> todaysChats = filterTodaysChats(chatRoom, today);
+
+        if (todaysChats.isEmpty()) {
+            return null;
+        }
+
+        boolean isMissionCompleted = checkMissionCompletion(todaysChats, startTime, endTime);
+
+        EMissionStatus status = determineMissionStatus(isMissionCompleted);
         return buildMissionListResponseDto(chatRoom.getChatType(), startTime, endTime, status);
+    }
+
+    private List<Chat> filterTodaysChats(ChatRoom chatRoom, LocalDate today) {
+        return chatRepository.findByChatRoomIdAndCreatedAtBetween(
+                chatRoom.getId(),
+                today.atStartOfDay().plusHours(9),
+                today.plusDays(1).atStartOfDay().plusHours(9)
+        );
+    }
+
+    private boolean checkMissionCompletion(List<Chat> chats, LocalDateTime startTime, LocalDateTime endTime) {
+        return chats.stream()
+                .filter(chat -> chat.getCreatedAt().isAfter(startTime))
+                .filter(chat -> chat.getCreatedAt().isBefore(endTime))
+                .anyMatch(Chat::getIsCompleted);
+    }
+
+    private EMissionStatus determineMissionStatus(boolean isMissionCompleted) {
+        return isMissionCompleted ? EMissionStatus.SUCCESS : EMissionStatus.FAIL;
     }
 
     private LocalDateTime getStartTime(EChatType chatType, LocalDate date, LocalTime wakeUpTime) {
@@ -64,19 +100,13 @@ public class MissionListService implements MissionListUseCase {
 
     private LocalDateTime getEndTime(EChatType chatType, LocalDate date, LocalTime wakeUpTime) {
         return switch (chatType) {
-            case FOLD -> date.atTime(wakeUpTime.plusMinutes(30));
+            case FOLD -> date.atTime(wakeUpTime.plusMinutes(60));
             case MORNING -> date.atTime(10, 0);
             case LUNCH -> date.atTime(13, 0);
             case DINNER -> date.atTime(20, 0);
             case WALK, MARKET, PICTURE -> date.atTime(16, 0);
             case LEAVE -> date.atTime(21, 0);
         };
-    }
-
-    private EMissionStatus evaluateMissionStatus(ChatRoom chatRoom, LocalDateTime startTime, LocalDateTime endTime) {
-        return chatRepository.findByChatRoomIdAndCreatedAtBetween(chatRoom.getId(), startTime.plusHours(9), endTime.plusHours(9)).stream()
-                .filter(chat -> chat.getIsCompleted() != null)
-                .anyMatch(Chat::getIsCompleted) ? EMissionStatus.SUCCESS : EMissionStatus.FAIL;
     }
 
     private MissionListResponseDto buildMissionListResponseDto(EChatType chatType, LocalDateTime startTime, LocalDateTime endTime, EMissionStatus status) {
@@ -94,4 +124,3 @@ public class MissionListService implements MissionListUseCase {
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
     }
 }
-

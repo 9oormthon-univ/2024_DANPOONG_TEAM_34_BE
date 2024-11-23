@@ -169,7 +169,7 @@ public class CalendarService implements CalendarUseCase {
 
     private LocalDateTime getEndTime(EChatType chatType, LocalDate date, LocalTime wakeUpTime) {
         return switch (chatType) {
-            case FOLD -> date.atTime(wakeUpTime.plusMinutes(30));
+            case FOLD -> date.atTime(wakeUpTime.plusMinutes(60));
             case MORNING -> date.atTime(10, 0);
             case LUNCH -> date.atTime(13, 0);
             case DINNER -> date.atTime(20, 0);
