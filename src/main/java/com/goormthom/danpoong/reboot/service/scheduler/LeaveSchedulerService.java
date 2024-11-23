@@ -1,5 +1,6 @@
 package com.goormthom.danpoong.reboot.service.scheduler;
 
+import com.goormthom.danpoong.reboot.constant.Constants;
 import com.goormthom.danpoong.reboot.domain.Chat;
 import com.goormthom.danpoong.reboot.domain.ChatRoom;
 import com.goormthom.danpoong.reboot.domain.User;
@@ -69,7 +70,7 @@ public class LeaveSchedulerService implements LeaveSchedulerUseCase {
                 .map(user -> ChatRoom.builder()
                         .user(user)
                         .chatType(eChatType)
-                        .title("일상회복팀 리부트대리")
+                        .title(String.format(Constants.TEAM, eChatType.chatTitle()))
                         .build())
                 .toList();
         return chatRoomRepository.saveAll(newChatRooms);
@@ -93,7 +94,7 @@ public class LeaveSchedulerService implements LeaveSchedulerUseCase {
     private List<String> generateMessages(ChatRoom chatRoom) {
         String userName = chatRoom.getUser().getNickname();
         return List.of(
-                String.format("안녕하세요 %s님, 일상회복팀 리부트대리입니다.", userName),
+                String.format("안녕하세요 %s님, %s입니다.", userName, chatRoom.getTitle()),
                 "(20:00~21:00) 마지막 업무 안내드립니다. 퇴근 준비를 마치고 하루를 정리해보세요. 완료 후 간단한 사진과 함께 보고 부탁드립니다!",
                 "오늘 하루도 고생 많으셨습니다!"
         );
