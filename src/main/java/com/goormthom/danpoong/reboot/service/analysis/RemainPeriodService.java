@@ -28,9 +28,9 @@ public class RemainPeriodService implements RemainPeriodUseCase {
         LocalDate workEndTime = user.getWorkEndTime();
         LocalDate today = LocalDate.now();
 
-        long contractPeriod = calculateDaysBetween(workStartTime, workEndTime);
-        long remainPeriod = Math.max(calculateDaysBetween(today, workEndTime), 0);
-        long progressPeriod = Math.min(calculateDaysBetween(workStartTime, today), contractPeriod);
+        long contractPeriod = calculateDaysInclusive(workStartTime, workEndTime);
+        long progressPeriod = calculateDaysInclusive(workStartTime, today);
+        long remainPeriod = contractPeriod - progressPeriod;
 
         return RemainPeriodResponseDto.builder()
                 .contractPeriod(contractPeriod)
@@ -39,8 +39,8 @@ public class RemainPeriodService implements RemainPeriodUseCase {
                 .build();
     }
 
-    private long calculateDaysBetween(LocalDate start, LocalDate end) {
-        return Duration.between(start.atStartOfDay(), end.atStartOfDay()).toDays();
+    private long calculateDaysInclusive(LocalDate start, LocalDate end) {
+        return Duration.between(start.atStartOfDay(), end.plusDays(1).atStartOfDay()).toDays();
     }
 
     private User findUserById(UUID userId) {
