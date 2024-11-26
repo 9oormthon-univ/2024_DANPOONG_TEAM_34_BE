@@ -6,10 +6,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicUpdate
 @Table(name = "meals")
 public class Meal {
     @Id
@@ -36,5 +38,9 @@ public class Meal {
                 .mealTime(mealTime)
                 .user(user)
                 .build();
+    }
+
+    public void updateMeal(EMealTime mealTime) {
+        this.mealTime = mealTime;
     }
 }
