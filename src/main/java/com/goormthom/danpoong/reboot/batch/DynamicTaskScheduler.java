@@ -58,10 +58,14 @@ public class DynamicTaskScheduler {
     }
 
     private Map<UUID, Map<EChatType, ChatRoom>> preloadChatRooms(List<User> users) {
-        return chatRoomRepository.findAllByUserIn(users).stream()
+        List<ChatRoom> chatRooms = chatRoomRepository.findAllByUserInAndChatType(users, EChatType.FOLD);
+        return chatRooms.stream()
                 .collect(Collectors.groupingBy(
                         chatRoom -> chatRoom.getUser().getId(),
-                        Collectors.toMap(ChatRoom::getChatType, Function.identity())
+                        Collectors.toMap(
+                                ChatRoom::getChatType,
+                                Function.identity()
+                        )
                 ));
     }
 
