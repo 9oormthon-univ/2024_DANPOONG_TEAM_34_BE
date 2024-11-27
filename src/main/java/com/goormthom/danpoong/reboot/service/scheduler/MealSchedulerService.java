@@ -17,11 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,11 +34,7 @@ public class MealSchedulerService implements MealSchedulerUseCase {
     @Transactional
     public void execute(EChatType chatType) {
         List<Meal> meals = fetchMealsByChatType(chatType);
-        Map<User, ChatRoom> userChatRoomMap = fetchExistingUserChatRooms(meals, chatType);
-
-        List<ChatRoom> newChatRooms = generateNewChatRooms(meals, chatType, userChatRoomMap);
-        saveNewChatRooms(newChatRooms);
-
+        Map<User, ChatRoom> userChatRoomMap = fetchOrCreateChatRooms(meals, chatType);
         List<Chat> chatsToSave = generateChatsForUsers(userChatRoomMap);
         saveChats(chatsToSave);
     }
@@ -50,18 +44,32 @@ public class MealSchedulerService implements MealSchedulerUseCase {
         return mealRepository.findByMealTime(mealTime);
     }
 
-    private Map<User, ChatRoom> fetchExistingUserChatRooms(List<Meal> meals, EChatType chatType) {
+    private Map<User, ChatRoom> fetchOrCreateChatRooms(List<Meal> meals, EChatType chatType) {
+        Map<User, ChatRoom> userChatRoomMap = new HashMap<>();
         List<User> users = extractUsersFromMeals(meals);
-        return findChatRoomsByUsersAndType(users, chatType);
+
+        for (User user : users) {
+            ChatRoom chatRoom = chatRoomRepository.findByUserAndChatType(user, chatType)
+                    .orElseGet(() -> createAndSaveChatRoom(user, chatType));
+            userChatRoomMap.put(user, chatRoom);
+        }
+
+        return userChatRoomMap;
     }
 
-    private List<ChatRoom> generateNewChatRooms(List<Meal> meals, EChatType chatType, Map<User, ChatRoom> userChatRoomMap) {
-        List<User> usersNeedingChatRooms = findUsersWithoutChatRooms(meals, userChatRoomMap);
-        return createChatRooms(usersNeedingChatRooms, chatType, userChatRoomMap);
+    private ChatRoom createAndSaveChatRoom(User user, EChatType chatType) {
+        ChatRoom newChatRoom = ChatRoom.builder()
+                .title(String.format(Constants.TEAM, chatType.chatTitle()))
+                .user(user)
+                .chatType(chatType)
+                .build();
+        return chatRoomRepository.save(newChatRoom);
     }
 
-    private void saveNewChatRooms(List<ChatRoom> chatRooms) {
-        chatRoomRepository.saveAll(chatRooms);
+    private List<User> extractUsersFromMeals(List<Meal> meals) {
+        return meals.stream()
+                .map(Meal::getUser)
+                .toList();
     }
 
     private List<Chat> generateChatsForUsers(Map<User, ChatRoom> userChatRoomMap) {
@@ -72,52 +80,6 @@ public class MealSchedulerService implements MealSchedulerUseCase {
 
     private void saveChats(List<Chat> chats) {
         chatRepository.saveAll(chats);
-    }
-
-    private EMealTime convertChatTypeToMealTime(EChatType chatType) {
-        return EMealTime.valueOf(chatType.toString());
-    }
-
-    private List<User> extractUsersFromMeals(List<Meal> meals) {
-        return meals.stream()
-                .map(Meal::getUser)
-                .toList();
-    }
-
-    private Map<User, ChatRoom> findChatRoomsByUsersAndType(List<User> users, EChatType chatType) {
-        return chatRoomRepository.findAllByUserInAndChatType(users, chatType).stream()
-                .collect(Collectors.toMap(ChatRoom::getUser, chatRoom -> chatRoom));
-    }
-
-    private List<User> findUsersWithoutChatRooms(List<Meal> meals, Map<User, ChatRoom> userChatRoomMap) {
-        return meals.stream()
-                .map(Meal::getUser)
-                .filter(user -> isEligibleForChatRoom(user, userChatRoomMap))
-                .toList();
-    }
-
-    private boolean isEligibleForChatRoom(User user, Map<User, ChatRoom> userChatRoomMap) {
-        return userChatRoomMap.get(user) == null
-                && Optional.ofNullable(user.getWorkEndTime())
-                .map(workEndTime -> workEndTime.isAfter(LocalDate.now()))
-                .orElse(false);
-    }
-
-
-    private List<ChatRoom> createChatRooms(List<User> users, EChatType chatType, Map<User, ChatRoom> userChatRoomMap) {
-        return users.stream()
-                .map(user -> createChatRoom(user, chatType, userChatRoomMap))
-                .toList();
-    }
-
-    private ChatRoom createChatRoom(User user, EChatType chatType, Map<User, ChatRoom> userChatRoomMap) {
-        ChatRoom newChatRoom = ChatRoom.builder()
-                .title(String.format(Constants.TEAM,chatType.chatTitle()))
-                .user(user)
-                .chatType(chatType)
-                .build();
-        userChatRoomMap.put(user, newChatRoom);
-        return newChatRoom;
     }
 
     private List<Chat> createChatsForChatRoom(ChatRoom chatRoom) {
@@ -157,5 +119,8 @@ public class MealSchedulerService implements MealSchedulerUseCase {
                 .isRead(false)
                 .build();
     }
-}
 
+    private EMealTime convertChatTypeToMealTime(EChatType chatType) {
+        return EMealTime.valueOf(chatType.toString());
+    }
+}
