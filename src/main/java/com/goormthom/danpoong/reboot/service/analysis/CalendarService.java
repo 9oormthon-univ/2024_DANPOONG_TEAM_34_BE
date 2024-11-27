@@ -162,7 +162,7 @@ public class CalendarService implements CalendarUseCase {
             case MORNING -> date.atTime(9, 0);
             case LUNCH -> date.atTime(12, 0);
             case DINNER -> date.atTime(17, 0);
-            case WALK, MARKET, PICTURE -> date.atTime(15, 0);
+            case OUTSIDE, WALK, MARKET, PICTURE -> date.atTime(15, 0);
             case LEAVE -> date.atTime(20, 0);
         };
     }
@@ -173,7 +173,7 @@ public class CalendarService implements CalendarUseCase {
             case MORNING -> date.atTime(10, 0);
             case LUNCH -> date.atTime(13, 0);
             case DINNER -> date.atTime(20, 0);
-            case WALK, MARKET, PICTURE -> date.atTime(16, 0);
+            case OUTSIDE, WALK, MARKET, PICTURE -> date.atTime(16, 0);
             case LEAVE -> date.atTime(21, 0);
         };
     }

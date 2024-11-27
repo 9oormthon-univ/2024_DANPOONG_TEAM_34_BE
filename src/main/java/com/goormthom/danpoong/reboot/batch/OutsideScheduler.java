@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class OutsideScheduler {
     private final OutsideSchedulerUseCase outsideSchedulerUseCase;
 
-    @Scheduled(cron = "0 0 14 * * *")
+    @Scheduled(cron = "0 43 3 * * *")
     public void outsideTask() {
         log.info("outsideTask Running");
         outsideSchedulerUseCase.execute();
