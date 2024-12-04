@@ -43,28 +43,30 @@ public class Chat {
     private Boolean isCompleted;
 
     @Builder
-    public Chat(Long chatRoomId, String imageUrl, String responseContent, ESpeaker speaker, Boolean isRead, Boolean isCompleted) {
+    public Chat(Long chatRoomId, String responseContent, ESpeaker speaker, Boolean isRead) {
         this.chatRoomId = chatRoomId;
-        this.imageUrl = imageUrl;
         this.responseContent = responseContent;
         this.createdAt = LocalDateTime.now().plusHours(9);
         this.speaker = speaker;
         this.isRead = isRead;
-        this.isCompleted = isCompleted;
+        this.isCompleted = false;
     }
-    public static Chat toEntity(Long chatRoomId, String responseContent, String imageUrl, ESpeaker speaker, Boolean isCompleted) {
+    public static Chat toEntity(Long chatRoomId, String responseContent, ESpeaker speaker) {
         return Chat.builder()
                 .chatRoomId(chatRoomId)
                 .responseContent(responseContent)
-                .imageUrl(imageUrl)
                 .speaker(speaker)
                 .isRead(true)
-                .isCompleted(isCompleted)
                 .build();
     }
 
     public void updateIsRead() {
         this.isRead = true;
+    }
+
+    public void updateImageUrl(String imageUrl, Boolean isCompleted) {
+        this.imageUrl = imageUrl;
+        this.isCompleted = isCompleted;
     }
 
 }

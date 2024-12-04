@@ -21,7 +21,8 @@ public enum EChatType {
     MARKET("MARKET","장보기", 4L, "외근"), // 장보기 - 15:00 - 16:00
     PICTURE("PICTURE", "외부사진찍기", 4L, "외근"), // 출사 - 15:00 - 16:00
 
-    LEAVE("LEAVE","잠자러 가기", 6L, "퇴근"), // 퇴근 - 20:00 - 21:00
+    LEAVE("LEAVE","잠자러 가기", 6L, "퇴근"),// 퇴근 - 20:00 - 21:00
+    FREE("FREE","자유 채팅", 0L, "입사 동기")
     ;
 
     private final String chatType;

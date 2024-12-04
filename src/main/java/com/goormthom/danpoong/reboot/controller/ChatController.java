@@ -40,11 +40,10 @@ public class ChatController {
             @RequestParam("question") String question,
             @RequestParam("eChatType") EChatType eChatType,
             //@Valid  @RequestPart CreateChatRequestDto createChatRequestDto,
-            @RequestPart("image") MultipartFile file,
+            @RequestPart(name = "image", required = false) MultipartFile file,
             @UserId UUID userId
     ) {
-        String url = s3Util.upload(file);
-        return ResponseDto.ok(createChatUseCase.execute(question, eChatType, url, userId));
+        return ResponseDto.ok(createChatUseCase.execute(question, eChatType, file, userId));
     }
 
     @GetMapping("")

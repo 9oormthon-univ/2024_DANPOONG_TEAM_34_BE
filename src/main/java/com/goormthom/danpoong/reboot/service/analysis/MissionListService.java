@@ -145,6 +145,7 @@ public class MissionListService implements MissionListUseCase {
             case DINNER -> date.atTime(17, 0);
             case OUTSIDE, WALK, MARKET, PICTURE -> date.atTime(15, 0);
             case LEAVE -> date.atTime(20, 0);
+            case FREE -> null;
         };
     }
 
@@ -156,6 +157,7 @@ public class MissionListService implements MissionListUseCase {
             case DINNER -> date.atTime(20, 0);
             case OUTSIDE, WALK, MARKET, PICTURE -> date.atTime(16, 0);
             case LEAVE -> date.atTime(21, 0);
+            case FREE -> null;
         };
     }
 }
