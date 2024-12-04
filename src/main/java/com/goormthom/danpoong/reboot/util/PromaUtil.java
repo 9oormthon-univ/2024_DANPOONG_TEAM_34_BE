@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goormthom.danpoong.reboot.constant.Constants;
 import com.goormthom.danpoong.reboot.domain.type.EChatType;
-import com.goormthom.danpoong.reboot.dto.response.PromaDto;
+import com.goormthom.danpoong.reboot.dto.response.PromaMissionDto;
 import com.goormthom.danpoong.reboot.exception.CommonException;
 import com.goormthom.danpoong.reboot.exception.ErrorCode;
 import java.util.Map;
@@ -21,15 +21,21 @@ public class PromaUtil {
     @Value("${proma.answer-url}")
     private String promaAnswerUrl;
 
-    @Value("${proma.meal.accessToken}")
+    @Value("${proma.mission.accessToken}")
     private String tokenMealAccessToken;
 
-    @Value("${proma.meal.secretKey}")
+    @Value("${proma.mission.secretKey}")
     private String tokenMealSecretKey;
+
+    @Value("${proma.free.accessToken}")
+    private String tokenFreeAccessToken;
+
+    @Value("${proma.free.secretKey}")
+    private String tokenFreeSecretKey;
 
     private final RestClient restClient = RestClient.create();
 
-    public PromaDto generateAnswer(String messageQuestion, String imageUrl, String email, EChatType chatType) {
+    public PromaMissionDto generateAnswer(String messageQuestion, String imageUrl, String email, EChatType chatType) {
         Map<String, Object> response;
         try {
             response = Objects.requireNonNull(restClient.post()
@@ -48,28 +54,55 @@ public class PromaUtil {
                     .retrieve()
                     .toEntity(Map.class).getBody();
         } catch (Exception e) {
+            e.printStackTrace();
             throw new CommonException(ErrorCode.EXTERNAL_SERVER_ERROR);
         }
-        System.err.println("asdfas");
+
         Map<String, Object> result = (Map<String, Object>) response.get("responseDto");
-        System.err.println(result);
-        //String answer = result.get("messageAnswer").toString();
-        //Map<String, Object> answer1 = (Map<String, Object>)result.get("messageAnswer");
 
-        //Map<String, Object> messageAnswer = (Map<String, Object>) result.get("messageAnswer");
-
-// JSON 문자열 파싱
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = null;
         try {
             jsonNode = objectMapper.readTree((String) result.get("messageAnswer"));
         } catch (JsonProcessingException e) {
+            e.printStackTrace();
             throw new CommonException(ErrorCode.EXTERNAL_SERVER_ERROR);
         }
 
         String answer = jsonNode.get("answer").asText();
         Boolean isComplete = jsonNode.get("isComplete").asBoolean();
 
-        return PromaDto.of(answer, isComplete);
+        return PromaMissionDto.of(answer, isComplete);
     }
+
+    public String generatorFreeChatAnswer(String messageQuestion, String email, EChatType chatType) {
+        Map<String, Object> response;
+        try {
+            response = Objects.requireNonNull(restClient.post()
+                            .uri(promaAnswerUrl))
+                    .headers(httpHeaders -> {
+                        httpHeaders.set("Content-Type", "application/json");
+                    })
+                    .body(Map.of(
+                            "userLoginId", email+chatType,
+                            "apiToken", tokenFreeAccessToken,
+                            "secretKey", tokenFreeSecretKey,
+                            "messageQuestion", messageQuestion,
+                            "fileType", "",
+                            "messageFile", ""
+                    ))
+                    .retrieve()
+                    .toEntity(Map.class).getBody();
+        } catch (Exception e) {
+            System.err.println("asdfasdf 여기입니다. ");
+            e.printStackTrace();
+            throw new CommonException(ErrorCode.EXTERNAL_SERVER_ERROR);
+        }
+
+        Map<String, Object> result = (Map<String, Object>) response.get("responseDto");
+
+        return (String) result.get("messageAnswer");
+    }
+
+
 }

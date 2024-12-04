@@ -3,7 +3,7 @@ package com.goormthom.danpoong.reboot.controller.docs;
 import com.goormthom.danpoong.reboot.annotation.UserId;
 import com.goormthom.danpoong.reboot.dto.common.ResponseDto;
 import com.goormthom.danpoong.reboot.dto.request.CreateChatRequestDto;
-import com.goormthom.danpoong.reboot.dto.response.PromaDto;
+import com.goormthom.danpoong.reboot.dto.response.PromaMissionDto;
 import com.goormthom.danpoong.reboot.dto.response.ReadChatResponseDto;
 import com.goormthom.danpoong.reboot.dto.response.ReadChatRoomResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,7 +45,7 @@ public interface ChatDocs {
                             - AI응답 성공
                             - AI응답 반환
                             """,
-                    content = @Content(schema = @Schema(implementation = PromaDto.class), mediaType = "application/json")
+                    content = @Content(schema = @Schema(implementation = PromaMissionDto.class), mediaType = "application/json")
 
             )
     })
