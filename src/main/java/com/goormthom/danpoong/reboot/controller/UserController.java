@@ -11,12 +11,14 @@ import com.goormthom.danpoong.reboot.usecase.user.ReadUserUseCase;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
@@ -45,6 +47,8 @@ public class UserController implements UserDocs {
             @Valid @RequestBody CreateRegisterRequestDto createRegisterRequestDto,
             @UserId UUID userId
     ) {
+        log.info("Registering user with userId: {}", userId);
+        log.info("Request body of PartTIme: {}", createRegisterRequestDto.partTime());
         return ResponseDto.ok(createRegisterUseCase.execute(createRegisterRequestDto, userId));
     }
 }
