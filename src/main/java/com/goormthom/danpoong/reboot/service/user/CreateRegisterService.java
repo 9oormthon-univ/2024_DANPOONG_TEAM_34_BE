@@ -1,12 +1,16 @@
 package com.goormthom.danpoong.reboot.service.user;
 
+import com.goormthom.danpoong.reboot.domain.Chat;
+import com.goormthom.danpoong.reboot.domain.ChatRoom;
 import com.goormthom.danpoong.reboot.domain.Meal;
 import com.goormthom.danpoong.reboot.domain.User;
+import com.goormthom.danpoong.reboot.domain.type.EChatType;
 import com.goormthom.danpoong.reboot.domain.type.EMealTime;
 import com.goormthom.danpoong.reboot.dto.request.CreateMealRequestDto;
 import com.goormthom.danpoong.reboot.dto.request.CreateRegisterRequestDto;
 import com.goormthom.danpoong.reboot.exception.CommonException;
 import com.goormthom.danpoong.reboot.exception.ErrorCode;
+import com.goormthom.danpoong.reboot.repository.ChatRoomRepository;
 import com.goormthom.danpoong.reboot.repository.MealRepository;
 import com.goormthom.danpoong.reboot.repository.UserRepository;
 import com.goormthom.danpoong.reboot.batch.DynamicTaskScheduler;
@@ -26,6 +30,7 @@ public class CreateRegisterService implements CreateRegisterUseCase {
     private final UserRepository userRepository;
     private final MealRepository mealRepository;
     private final DynamicTaskScheduler dynamicTaskScheduler;
+    private final ChatRoomRepository chatRoomRepository;
 
     @Override
     public Boolean execute(CreateRegisterRequestDto createRegisterRequestDto, UUID userId) {
@@ -39,6 +44,9 @@ public class CreateRegisterService implements CreateRegisterUseCase {
         List<Meal> mealsToAdd = findMealsToAdd(user, existingMeals, requestedMealTimes);
 
         processMealChanges(mealsToDelete, mealsToAdd);
+
+        ChatRoom chatRoom = ChatRoom.toEntity(user, "리부트 오피스 일상회복팀 동기", EChatType.FREE);
+        chatRoomRepository.save(chatRoom);
 
         dynamicTaskScheduler.scheduleSingleUserTask(user);
 
