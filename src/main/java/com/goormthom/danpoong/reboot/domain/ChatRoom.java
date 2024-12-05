@@ -34,4 +34,12 @@ public class ChatRoom {
         this.title = title;
         this.chatType = chatType;
     }
+
+    public static ChatRoom toEntity(User user, String title, EChatType chatType) {
+        return ChatRoom.builder()
+                .user(user)
+                .title(title)
+                .chatType(chatType)
+                .build();
+    }
 }
