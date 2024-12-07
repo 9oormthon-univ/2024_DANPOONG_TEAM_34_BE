@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class CommutingScheduler {
     private final LeaveSchedulerUseCase leaveSchedulerUseCase;
 
-    @Scheduled(cron = "0 0 20 * * *")
+    @Scheduled(cron = "0 0 22 * * *")
     public void leaveTask() {
         log.info("leaveTask Running");
         leaveSchedulerUseCase.execute(EChatType.LEAVE);
