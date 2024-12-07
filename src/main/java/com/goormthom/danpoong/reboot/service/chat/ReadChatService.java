@@ -59,12 +59,7 @@ public class ReadChatService implements ReadChatUseCase {
                 .build();
     }
 
-    private void isReadCheck(List<Chat> chats) {
 
-
-        System.err.println("asdf");
-
-    }
 
 
 
