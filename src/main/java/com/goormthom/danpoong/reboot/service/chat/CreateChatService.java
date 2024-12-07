@@ -40,7 +40,7 @@ public class CreateChatService implements CreateChatUseCase {
         ChatRoom chatRoom = chatRoomRepository.findByUserAndChatType(user, eChatType)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_CHATROOM));
 
-        Chat chat = Chat.toEntity(chatRoom.getId(),question,ESpeaker.USER);
+        Chat chat = Chat.toEntity(chatRoom.getId(), question, ESpeaker.USER);
         String answer = null;
         Boolean isCompleted = false;
 
@@ -49,7 +49,7 @@ public class CreateChatService implements CreateChatUseCase {
         } else {
             String imageUrl = s3Util.upload(file);
             PromaMissionDto promaMissionDto = promaUtil.generateAnswer(question, imageUrl, user.getEmail(), eChatType);
-            chat.updateImageUrl(promaMissionDto.messageAnswer(), promaMissionDto.isCompleted());
+            chat.updateImageUrl(imageUrl, promaMissionDto.isCompleted());
             isCompleted = promaMissionDto.isCompleted();
             answer = promaMissionDto.messageAnswer();
         }
