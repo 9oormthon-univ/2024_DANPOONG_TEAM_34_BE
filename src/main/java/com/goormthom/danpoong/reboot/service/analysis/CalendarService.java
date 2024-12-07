@@ -94,7 +94,7 @@ public class CalendarService implements CalendarUseCase {
                 .collect(Collectors.toList());
     }
 
-    private CalendarItemResponseDto createCalendarItem(Entry<LocalDate, Map<EChatType, Map<EMissionStatus, Integer>>> entry, Long groupType, Long[] counts) {
+    private CalendarItemResponseDto createCalendarItem(Map.Entry<LocalDate, Map<EChatType, Map<EMissionStatus, Integer>>> entry, Long groupType, Long[] counts) {
         LocalDate date = entry.getKey();
         Map<EChatType, Map<EMissionStatus, Integer>> missionCounts = entry.getValue();
         String status = evaluateDayStatus(missionCounts, groupType);
@@ -165,7 +165,7 @@ public class CalendarService implements CalendarUseCase {
             case DINNER -> date.atTime(17, 0);
             case OUTSIDE, WALK, MARKET, PICTURE -> date.atTime(15, 0);
             case LEAVE -> date.atTime(20, 0);
-            case FREE -> null;
+            case FREE -> date.atTime(wakeUpTime);
         };
     }
 
@@ -177,7 +177,7 @@ public class CalendarService implements CalendarUseCase {
             case DINNER -> date.atTime(20, 0);
             case OUTSIDE, WALK, MARKET, PICTURE -> date.atTime(16, 0);
             case LEAVE -> date.atTime(21, 0);
-            case FREE -> null;
+            case FREE -> date.atTime(21, 0);
         };
     }
 
