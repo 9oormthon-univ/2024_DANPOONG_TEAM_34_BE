@@ -104,7 +104,7 @@ public class MealSchedulerService implements MealSchedulerUseCase {
             );
             case DINNER -> List.of(
                     String.format("안녕하세요 %s님, %s입니다.", userName, chatRoom.getTitle()),
-                    "(20:30~21:30) 오늘 업무 안내드립니다. 저녁시간에 맞춰서 식사를 챙겨주세요. 업무 완료 후 간단한 사진과 함께 무엇을 먹었는지 보고 부탁드립니다!",
+                    "(20:50~21:30) 오늘 업무 안내드립니다. 저녁시간에 맞춰서 식사를 챙겨주세요. 업무 완료 후 간단한 사진과 함께 무엇을 먹었는지 보고 부탁드립니다!",
                     "오늘 하루도 화이팅입니다!"
             );
             default -> throw new IllegalArgumentException("Unknown chat type: " + chatRoom.getChatType());
