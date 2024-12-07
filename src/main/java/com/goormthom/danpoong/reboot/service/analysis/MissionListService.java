@@ -142,7 +142,7 @@ public class MissionListService implements MissionListUseCase {
             case FOLD -> date.atTime(wakeUpTime);
             case MORNING -> date.atTime(9, 0);
             case LUNCH -> date.atTime(12, 0);
-            case DINNER -> date.atTime(17, 0);
+            case DINNER -> date.atTime(18, 0);
             case OUTSIDE, WALK, MARKET, PICTURE -> date.atTime(15, 0);
             case LEAVE -> date.atTime(20, 0);
             case FREE -> null;

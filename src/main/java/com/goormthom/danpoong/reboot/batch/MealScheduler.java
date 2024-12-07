@@ -25,7 +25,7 @@ public class MealScheduler {
         mealSchedulerUseCase.execute(EChatType.LUNCH);
     }
 
-    @Scheduled(cron = "0 0 16 * * *")
+    @Scheduled(cron = "0 0 18 * * *")
     public void dinnerTask() {
         log.info("dinnerTask Running");
         mealSchedulerUseCase.execute(EChatType.DINNER);
