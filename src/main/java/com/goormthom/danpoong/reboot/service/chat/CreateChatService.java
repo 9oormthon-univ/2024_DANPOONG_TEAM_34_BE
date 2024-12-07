@@ -50,6 +50,7 @@ public class CreateChatService implements CreateChatUseCase {
             String imageUrl = s3Util.upload(file);
             PromaMissionDto promaMissionDto = promaUtil.generateAnswer(question, imageUrl, user.getEmail(), eChatType);
             chat.updateImageUrl(promaMissionDto.messageAnswer(), promaMissionDto.isCompleted());
+            isCompleted = promaMissionDto.isCompleted();
             answer = promaMissionDto.messageAnswer();
         }
 
