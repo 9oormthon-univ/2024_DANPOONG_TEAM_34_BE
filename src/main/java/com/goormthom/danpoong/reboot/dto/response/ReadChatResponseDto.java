@@ -21,7 +21,7 @@ public record ReadChatResponseDto(
     public ReadChatResponseDto(String chatContent, String imageUrl, LocalDateTime createAt, ESpeaker speaker, Boolean isCompleted) {
         this.chatContent = chatContent;
         this.imageUrl = imageUrl;
-        this.createAt = createAt;
+        this.createAt = createAt.minusHours(9L);
         this.speaker = speaker;
         this.isCompleted = isCompleted;
     }
