@@ -23,7 +23,7 @@ public record ReadChatRoomResponseDto(
         this.title = title;
         this.messagePreview = messagePreview;
         this.nonReadCount = nonReadCount;
-        this.createdAt = createdAt;
+        this.createdAt = createdAt.minusHours(9L);
     }
 
     public static ReadChatRoomResponseDto of(ChatRoom chatRoom, String messagePreview, Integer nonReadCount, LocalTime createdAt) {
