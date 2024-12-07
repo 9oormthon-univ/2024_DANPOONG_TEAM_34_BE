@@ -15,6 +15,7 @@ import com.goormthom.danpoong.reboot.repository.UserRepository;
 import com.goormthom.danpoong.reboot.usecase.chat.CreateChatUseCase;
 import com.goormthom.danpoong.reboot.util.PromaUtil;
 import com.goormthom.danpoong.reboot.util.S3Util;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,16 +43,14 @@ public class CreateChatService implements CreateChatUseCase {
         Chat chat = Chat.toEntity(chatRoom.getId(),question,ESpeaker.USER);
         String answer = null;
         Boolean isCompleted = false;
-        switch (eChatType) {
-            case FREE -> {
-                answer = promaUtil.generatorFreeChatAnswer(question, user.getEmail(), eChatType);
-            }
-            default -> {
-                String imageUrl = s3Util.upload(file);
-                PromaMissionDto promaMissionDto = promaUtil.generateAnswer(question, imageUrl, user.getEmail(), eChatType);
-                chat.updateImageUrl(promaMissionDto.messageAnswer(), promaMissionDto.isCompleted());
-                answer = promaMissionDto.messageAnswer();
-            }
+
+        if (Objects.requireNonNull(eChatType) == EChatType.FREE) {
+            answer = promaUtil.generatorFreeChatAnswer(question, user.getEmail(), eChatType);
+        } else {
+            String imageUrl = s3Util.upload(file);
+            PromaMissionDto promaMissionDto = promaUtil.generateAnswer(question, imageUrl, user.getEmail(), eChatType);
+            chat.updateImageUrl(promaMissionDto.messageAnswer(), promaMissionDto.isCompleted());
+            answer = promaMissionDto.messageAnswer();
         }
 
         Chat answerChat = Chat.toEntity(chatRoom.getId(), answer, ESpeaker.AI);
